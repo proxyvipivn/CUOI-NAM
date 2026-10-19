@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sổ Chi Tiêu – Tính tiền để dành đến Tết</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#eef2f9; --card:#fff; --ink:#161d2e; --muted:#6b7690; --line:#e7ebf3;
+    --brand:#4f46e5; --brand-soft:#eef0ff;
+    --green:#0ea472; --red:#e5484d; --red-soft:#fdeeee;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.18);
+  }
+  body{
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #dfe6ff 0%, transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, #ffe9f3 0%, transparent 50%),
+      var(--bg);
+    color:var(--ink); min-height:100vh; padding:24px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+
+  /* ---------- Header ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:27px;
+        background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 24px -10px #6366f1}
+  .brand h1{font-size:22px;letter-spacing:-.02em}
+  .brand p{font-size:13px;color:var(--muted);margin-top:3px}
+  .tet-card{background:linear-gradient(135deg,#fff1f5,#ffe4ec);border:1px solid #ffd6e3;
+            border-radius:18px;padding:14px 22px;text-align:right;box-shadow:var(--shadow)}
+  .tet-top{font-size:12.5px;font-weight:700;color:#be123c;margin-bottom:2px}
+  .tet-days{display:flex;align-items:baseline;gap:6px;justify-content:flex-end;
+            font-size:32px;font-weight:800;letter-spacing:-.03em;color:#e11d48;line-height:1.1}
+  .tet-days em{font-style:normal;font-size:13px;font-weight:700;color:#f43f5e}
+  .tet-date{font-size:12px;color:#f43f5e;margin-top:2px}
+
+  /* ---------- Layout ---------- */
+  .layout{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}
+  .col-left,.col-right{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+  .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid #fff}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .card-head h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .card-head h3{font-size:13px;font-weight:700;color:var(--muted)}
+
+  /* ---------- Form ---------- */
+  .field{display:block;margin-bottom:12px}
+  .field>span{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+  input,select,button{font:inherit;color:inherit}
+  input[type=text],input[type=date],input[type=month],select{
+    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;
+    background:#fbfcfe;outline:none;transition:.15s;font-size:14px}
+  input:focus,select:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px var(--brand-soft)}
+  .money{position:relative}
+  .money input{padding-right:32px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .money i{position:absolute;right:13px;top:50%;transform:translateY(-50%);
+           font-style:normal;font-size:13px;color:var(--muted)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .span2{grid-column:1/-1}
+  .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
+  .btn.primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;width:100%;
+               box-shadow:0 8px 18px -10px #4f46e5}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.ghost{background:var(--brand-soft);color:var(--brand)}
+  .btn.ghost:hover{background:#e3e6ff}
+  .divider{height:1px;background:var(--line);margin:14px 0}
+  #monthPicker{width:auto;padding:8px 10px;font-size:13px;border-radius:10px}
+
+  /* ---------- Stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .stat{background:#f8faff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .stat span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
+  .stat b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .pos{color:var(--green)} .neg{color:var(--red)}
+
+  .bar{display:flex;height:10px;border-radius:99px;overflow:hidden;background:var(--line);margin-top:16px;gap:2px}
+  .bar i{display:block;height:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+
+  /* ---------- Forecast ---------- */
+  .fc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .fc{background:#f8faff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .fc span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
+  .fc b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+  .fc-big{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .fc-big-item{border-radius:14px;padding:14px;background:linear-gradient(135deg,#eef1ff,#e4eaff);border:1px solid #dfe6ff}
+  .fc-big-item.tet{background:linear-gradient(135deg,#fff0f4,#ffe3ec);border-color:#ffd9e5}
+  .fc-big-item span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
+  .fc-big-item span b{color:var(--ink)}
+  .fc-big-item> b{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.5}
+
+  /* ---------- List ---------- */
+  .list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow:auto;padding-right:4px}
+  .item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
+        border:1px solid var(--line);background:#fff;transition:.15s}
+  .item:hover{background:#fbfcff;border-color:#dfe5f2}
+  .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none}
+  .meta{flex:1;min-width:0}
+  .meta .name{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .amt{font-weight:800;font-size:14px;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .del{border:0;background:transparent;color:#c3cad8;font-size:18px;cursor:pointer;
+       padding:2px 7px;border-radius:8px;line-height:1;transition:.15s}
+  .del:hover{color:var(--red);background:var(--red-soft)}
+  .badge{background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:800;
+         padding:3px 10px;border-radius:99px}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px;line-height:1.6}
+  .mini-list{display:flex;flex-direction:column;gap:6px}
+  .mini-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
+             background:#f8faff;border:1px solid var(--line);font-size:13px}
+  .mini-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+  .mini-item b{color:var(--green);font-variant-numeric:tabular-nums}
+  .empty-mini{font-size:12.5px;color:#aab2c5;padding:6px 2px}
+  .reset{background:none;border:0;color:#b6bfd0;font-size:12px;cursor:pointer;text-decoration:underline}
+  .reset:hover{color:var(--red)}
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    body{padding:14px 10px 40px}
+    .topbar{flex-direction:column;align-items:stretch}
+    .tet-card{text-align:left}
+    .tet-days{justify-content:flex-start}
+    .fc-big,.fc-row{grid-template-columns:1fr}
+    .card{padding:15px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div>
+        <h1>Sổ Chi Tiêu</h1>
+        <p>Quản lý lương, chi tiêu &amp; tính xem đến Tết để dành được bao nhiêu</p>
+      </div>
+    </div>
+    <div class="tet-card">
+      <div class="tet-top">🧧 Đếm ngược đến Tết <b id="tetName">–</b></div>
+      <div class="tet-days"><span id="tetDays">–</span><em>ngày</em></div>
+      <div class="tet-date" id="tetDate">–</div>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- ============ CỘT TRÁI ============ -->
+    <div class="col-left">
+
+      <section class="card">
+        <div class="card-head"><h2>💵 Thu nhập</h2></div>
+
+        <label class="field">
+          <span>Lương hàng tháng</span>
+          <div class="money"><input id="salary" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
+        </label>
+
+        <div class="divider"></div>
+        <div class="card-head"><h3>Thu nhập thêm (thưởng, làm thêm...)</h3></div>
+
+        <form id="incomeForm" class="form-grid">
+          <input class="span2" id="incomeName" type="text" placeholder="Ví dụ: Thưởng dự án" autocomplete="off">
+          <div class="money"><input id="incomeAmount" type="text" inputmode="numeric" placeholder="Số tiền" autocomplete="off"><i>đ</i></div>
+          <input id="incomeDate" type="date">
+          <button class="btn ghost span2" type="submit">+ Thêm thu nhập</button>
+        </form>
+
+        <div id="incomeList" class="mini-list" style="margin-top:10px"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>🧾 Thêm khoản chi</h2></div>
+        <form id="expenseForm">
+          <label class="field">
+            <span>Tên khoản chi</span>
+            <input id="expName" type="text" placeholder="Ăn trưa, đổ xăng, mua sữa..." autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Danh mục</span>
+            <select id="expCat"></select>
+          </label>
+          <div class="two">
+            <label class="field">
+              <span>Số tiền</span>
+              <div class="money"><input id="expAmount" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
+            </label>
+            <label class="field">
+              <span>Ngày</span>
+              <input id="expDate" type="date">
+            </label>
+          </div>
+          <button class="btn primary" type="submit">+ Thêm khoản chi</button>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- ============ CỘT PHẢI ============ -->
+    <div class="col-right">
+
+      <section class="card">
+        <div class="card-head">
+          <h2>📊 Tháng này</h2>
+          <input type="month" id="monthPicker">
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Thu nhập</span><b id="stIncome" class="pos">0 đ</b></div>
+          <div class="stat"><span>Chi tiêu</span><b id="stSpent" class="neg">0 đ</b></div>
+          <div class="stat"><span>Còn lại</span><b id="stLeft">0 đ</b></div>
+          <div class="stat"><span>Chi / ngày</span><b id="stPerDay">0 đ</b></div>
+        </div>
+        <div class="bar" id="catBar"></div>
+        <div class="legend" id="catLegend"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>🎯 Dự đoán tiết kiệm</h2></div>
+        <div class="fc-row">
+          <div class="fc"><span>Đã để dành được</span><b id="fcSaved">0 đ</b></div>
+          <div class="fc"><span>Trung bình mỗi tháng</span><b id="fcAvg">0 đ</b></div>
+        </div>
+        <div class="fc-big">
+          <div class="fc-big-item">
+            <span>Đến cuối năm <b id="fcYearLabel"></b></span>
+            <b id="fcYear">0 đ</b>
+          </div>
+          <div class="fc-big-item tet">
+            <span>Đến Tết <b id="fcTetLabel"></b></span>
+            <b id="fcTet">0 đ</b>
+          </div>
+        </div>
+        <p class="hint" id="fcHint"></p>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>📋 Danh sách chi tiêu</h2>
+          <span class="badge" id="listCount">0</span>
+        </div>
+        <div id="expenseList" class="list"></div>
+        <div style="text-align:right;margin-top:14px">
+          <button class="reset" id="resetBtn">Xoá toàn bộ dữ liệu</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+/* ==================== DANH MỤC ==================== */
+const CATS = {
+  food:      { label:'Ăn uống',  icon:'🍜', color:'#f59e0b' },
+  transport: { label:'Đi lại',   icon:'🛵', color:'#3b82f6' },
+  home:      { label:'Nhà cửa',  icon:'🏠', color:'#8b5cf6' },
+  shopping:  { label:'Mua sắm',  icon:'🛍️', color:'#ec4899' },
+  fun:       { label:'Giải trí', icon:'🎮', color:'#06b6d4' },
+  health:    { label:'Sức khỏe', icon:'💊', color:'#10b981' },
+  bill:      { label:'Hoá đơn',  icon:'📱', color:'#f97316' },
+  other:     { label:'Khác',     icon:'📦', color:'#6b7280' }
+};
+
+/* ==================== TIỆN ÍCH ==================== */
+const $ = s => document.querySelector(s);
+const nf = new Intl.NumberFormat('vi-VN');
+const fmt = n => nf.format(Math.round(n)) + ' đ';
+const parseMoney = s => parseInt(String(s).replace(/\D/g,''), 10) || 0;
+const uid = () => Math.random().toString(36).slice(2,10);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtDate(iso){
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function monthDiff(a, b){            // a, b dạng 'YYYY-MM'
+  const [ay,am] = a.split('-').map(Number);
+  const [by,bm] = b.split('-').map(Number);
+  return (by-ay)*12 + (bm-am);
+}
+function attachMoney(input){
+  input.addEventListener('input', () => {
+    const digits = input.value.replace(/\D/g,'');
+    input.value = digits ? nf.format(parseInt(digits,10)) : '';
+  });
+}
+
+/* ==================== TẾT ==================== */
+const TET_DATES = {
+  2025:{ d:'2025-01-29', name:'Ất Tỵ 2025' },
+  2026:{ d:'2026-02-17', name:'Bính Ngọ 2026' },
+  2027:{ d:'2027-02-06', name:'Đinh Mùi 2027' },
+  2028:{ d:'2028-01-26', name:'Mậu Thân 2028' },
+  2029:{ d:'2029-02-13', name:'Kỷ Dậu 2029' },
+  2030:{ d:'2030-02-03', name:'Canh Tuất 2030' },
+  2031:{ d:'2031-01-23', name:'Tân Hợi 2031' },
+  2032:{ d:'2032-02-11', name:'Nhâm Tý 2032' },
+  2033:{ d:'2033-01-31', name:'Quý Sửu 2033' }
+};
+
+function nextTet(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  for(let y = today.getFullYear(); y <= today.getFullYear() + 12; y++){
+    const info = TET_DATES[y];
+    if(!info) continue;
+    const d = new Date(info.d + 'T00:00:00');
+    if(d >= today) return { date:d, key:info.d.slice(0,7), name:info.name, iso:info.d };
+  }
+  const d = new Date(today.getFullYear()+1, 1, 17);
+  return { date:d, key:`${d.getFullYear()}-02`, name:'Tết', iso:'' };
+}
+
+/* ==================== STATE ==================== */
+const KEY = 'sochitieu_v2';
+let state = { salary:0, incomes:[], expenses:[] };
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      state.salary   = Number(d.salary) || 0;
+      state.incomes  = Array.isArray(d.incomes)  ? d.incomes  : [];
+      state.expenses = Array.isArray(d.expenses) ? d.expenses : [];
+    }
+  }catch(e){ console.warn('Không đọc được dữ liệu', e); }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ==================== KHỞI TẠO ==================== */
+load();
+
+$('#expCat').innerHTML = Object.entries(CATS)
+  .map(([k,c]) => `<option value="${k}">${c.icon} ${c.label}</option>`).join('');
+
+const today = todayISO();
+$('#expDate').value    = today;
+$('#incomeDate').value = today;
+$('#monthPicker').value = today.slice(0,7);
+
+attachMoney($('#salary'));
+attachMoney($('#incomeAmount'));
+attachMoney($('#expAmount'));
+
+/* ==================== SỰ KIỆN ==================== */
+$('#salary').addEventListener('input', e => {
+  const digits = e.target.value.replace(/\D/g,'');
+  state.salary = digits ? parseInt(digits,10) : 0;
+  save(); render();
+});
+
+$('#expenseForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = parseMoney($('#expAmount').value);
+  const date   = $('#expDate').value || todayISO();
+  if(amount <= 0){ alert('Bạn nhập số tiền lớn hơn 0 nhé!'); $('#expAmount').focus(); return; }
+
+  state.expenses.push({
+    id: uid(),
+    name: $('#expName').value.trim() || 'Khoản chi',
+    amount,
+    cat: $('#expCat').value,
+    date,
+    ts: Date.now()
+  });
+  $('#monthPicker').value = date.slice(0,7);
+  $('#expName').value = '';
+  $('#expAmount').value = '';
+  save(); render();
+});
+
+$('#incomeForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = parseMoney($('#incomeAmount').value);
+  const date   = $('#incomeDate').value || todayISO();
+  if(amount <= 0){ alert('Bạn nhập số tiền lớn hơn 0 nhé!'); $('#incomeAmount').focus(); return; }
+
+  state.incomes.push({
+    id: uid(),
+    name: $('#incomeName').value.trim() || 'Thu nhập thêm',
+    amount, date, ts: Date.now()
+  });
+  $('#monthPicker').value = date.slice(0,7);
+  $('#incomeName').value = '';
+  $('#incomeAmount').value = '';
+  save(); render();
+});
+
+$('#monthPicker').addEventListener('change', render);
+
+$('#expenseList').addEventListener('click', e => {
+  const btn = e.target.closest('[data-del]');
+  if(!btn) return;
+  state.expenses = state.expenses.filter(x => x.id !== btn.dataset.del);
+  save(); render();
+});
+
+$('#incomeList').addEventListener('click', e => {
+  const btn = e.target.closest('[data-delinc]');
+  if(!btn) return;
+  state.incomes = state.incomes.filter(x => x.id !== btn.dataset.delinc);
+  save(); render();
+});
+
+$('#resetBtn').addEventListener('click', () => {
+  if(confirm('Xoá toàn bộ dữ liệu chi tiêu? Không thể hoàn tác!')) {
+    state = { salary:0, incomes:[], expenses:[] };
+    save();
+    $('#salary').value = '';
+    render();
+  }
+});
+
+/* ==================== RENDER ==================== */
+function render(){
+  renderTet();
+  renderStats();
+  renderForecast();
+  renderExpenses();
+  renderIncomes();
+
+  const sEl = $('#salary');
+  const want = state.salary ? nf.format(state.salary) : '';
+  if(document.activeElement !== sEl && sEl.value !== want) sEl.value = want;
+}
+
+/* --- Đếm ngược Tết --- */
+function renderTet(){
+  const t = nextTet();
+  const now = new Date(); now.setHours(0,0,0,0);
+  const days = Math.round((t.date - now) / 86400000);
+
+  $('#tetName').textContent = t.name;
+  $('#tetDays').textContent = days === 0 ? '🎉' : days;
+  $('#tetDate').textContent = `(${fmtDate(t.iso)})`;
+}
+
+/* --- Thống kê tháng --- */
+function renderStats(){
+  const mk = $('#monthPicker').value || todayISO().slice(0,7);
+  const [y, m] = mk.split('-').map(Number);
+
+  const extra = state.incomes
+    .filter(i => i.date.slice(0,7) === mk)
+    .reduce((s,i) => s + i.amount, 0);
+  const income = state.salary + extra;
+
+  const exps = state.expenses.filter(e => e.date.slice(0,7) === mk);
+  const spent = exps.reduce((s,e) => s + e.amount, 0);
+  const left  = income - spent;
+  const daysInMonth = new Date(y, m, 0).getDate();
+
+  $('#stIncome').textContent = fmt(income);
+  $('#stSpent').textContent  = fmt(spent);
+  const leftEl = $('#stLeft');
+  leftEl.textContent = fmt(left);
+  leftEl.className = left >= 0 ? 'pos' : 'neg';
+  $('#stPerDay').textContent = fmt(spent / daysInMonth);
+
+  renderCatBar(exps, spent);
+}
+
+function renderCatBar(exps, total){
+  const bar = $('#catBar'), legend = $('#catLegend');
+  if(!exps.length || total <= 0){
+    bar.innerHTML = '';
+    legend.innerHTML = '<span>Chưa có khoản chi nào trong tháng này</span>';
+    return;
+  }
+  const by = {};
+  exps.forEach(e => { by[e.cat] = (by[e.cat] || 0) + e.amount; });
+  const entries = Object.entries(by).sort((a,b) => b[1] - a[1]);
+
+  bar.innerHTML = entries.map(([k,v]) => {
+    const c = CATS[k] || CATS.other;
+    return `<i style="width:${(v/total*100).toFixed(2)}%;background:${c.color}"></i>`;
+  }).join('');
+
+  legend.innerHTML = entries.map(([k,v]) => {
+    const c = CATS[k] || CATS.other;
+    return `<span><i class="dot" style="background:${c.color}"></i>${c.icon} ${c.label} · ${fmt(v)}</span>`;
+  }).join('');
+}
+
+/* --- Dự đoán tiết kiệm --- */
+function renderForecast(){
+  const now = new Date();
+  const nowKey = todayISO().slice(0,7);
+
+  const allDates = [
+    ...state.expenses.map(e => e.date),
+    ...state.incomes.map(i => i.date)
+  ].sort();
+  const startMonth = allDates.length ? allDates[0].slice(0,7) : nowKey;
+
+  const elapsed = Math.max(1, monthDiff(startMonth, nowKey) + 1);
+
+  const totalIncome = state.salary * elapsed
+                    + state.incomes.reduce((s,i) => s + i.amount, 0);
+  const totalSpent  = state.expenses.reduce((s,e) => s + e.amount, 0);
+  const saved = totalIncome - totalSpent;
+  const avg   = saved / elapsed;
+
+  const savedEl = $('#fcSaved');
+  savedEl.textContent = fmt(saved);
+  savedEl.className = saved >= 0 ? 'pos' : 'neg';
+
+  const avgEl = $('#fcAvg');
+  avgEl.textContent = fmt(avg);
+  avgEl.className = avg >= 0 ? 'pos' : 'neg';
+
+  // Đến cuối năm
+  const monthsLeftYear = 12 - (now.getMonth() + 1);
+  $('#fcYear').textContent = fmt(saved + avg * monthsLeftYear);
+  $('#fcYearLabel').textContent = `(${now.getFullYear()})`;
+
+  // Đến Tết
+  const t = nextTet();
+  const monthsLeftTet = Math.max(0, monthDiff(nowKey, t.key));
+  $('#fcTet').textContent = fmt(saved + avg * monthsLeftTet);
+  $('#fcTetLabel').textContent = t.name;
+
+  // Gợi ý
+  let hint;
+  if(!state.salary){
+    hint = '💡 Nhập lương hàng tháng ở cột bên trái để dự đoán chính xác hơn.';
+  } else if(saved < 0){
+    hint = `⚠️ Hiện bạn đang chi vượt thu ${fmt(Math.abs(saved))}. Hãy xem lại các khoản chi lớn nhé!`;
+  } else {
+    hint = `Dựa trên ${elapsed} tháng dữ liệu: mỗi tháng bạn để dành được khoảng ${fmt(avg)}. `
+         + `Còn ${monthsLeftTet} tháng nữa là đến Tết.`;
+  }
+  $('#fcHint').textContent = hint;
+}
+
+/* --- Danh sách chi tiêu --- */
+function renderExpenses(){
+  const mk = $('#monthPicker').value || todayISO().slice(0,7);
+  const items = state.expenses
+    .filter(e => e.date.slice(0,7) === mk)
+    .sort((a,b) => b.date.localeCompare(a.date) || (b.ts||0) - (a.ts||0));
+
+  $('#listCount').textContent = items.length;
+
+  const el = $('#expenseList');
+  if(!items.length){
+    el.innerHTML = '<div class="empty">Tháng này chưa có khoản chi nào.<br>Thêm khoản chi đầu tiên ở cột bên trái nhé 👈</div>';
+    return;
+  }
+
+  el.innerHTML = items.map(e => {
+    const c = CATS[e.cat] || CATS.other;
+    return `
+      <div class="item">
+        <div class="ico" style="background:${c.color}1a">${c.icon}</div>
+        <div class="meta">
+          <div class="name">${esc(e.name)}</div>
+          <div class="sub">${c.label} · ${fmtDate(e.date)}</div>
+        </div>
+        <div class="amt">-${fmt(e.amount)}</div>
+        <button class="del" data-del="${e.id}" title="Xoá">×</button>
+      </div>`;
+  }).join('');
+}
+
+/* --- Danh sách thu nhập thêm --- */
+function renderIncomes(){
+  const mk = $('#monthPicker').value || todayISO().slice(0,7);
+  const items = state.incomes.filter(i => i.date.slice(0,7) === mk);
+  const el = $('#incomeList');
+
+  if(!items.length){
+    el.innerHTML = '<div class="empty-mini">Chưa có thu nhập thêm trong tháng này</div>';
+    return;
+  }
+  el.innerHTML = items.map(i => `
+    <div class="mini-item">
+      <span>${esc(i.name)} · ${fmtDate(i.date)}</span>
+      <b>+${fmt(i.amount)}</b>
+      <button class="del" data-delinc="${i.id}" title="Xoá">×</button>
+    </div>`).join('');
+}
+
+/* ==================== CHẠY ==================== */
+render();
+</script>
+</body>
+</html>
