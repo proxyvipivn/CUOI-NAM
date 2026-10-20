@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sổ Chi Tiêu VIP – Lương, làm thêm & tiết kiệm đến Tết</title>
+<title>Sổ Thu Nhập Ngày – Tổng đến Tết</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -52,12 +52,11 @@
            background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 4px 12px -4px #ef4444}
   .brand p{font-size:13px;color:var(--muted);margin-top:3px}
   .actions{display:flex;gap:8px;align-items:center}
-  .iconương-btn{width:42px;height:42px;border-radius:12px;border:1px.</ solid var(--line);background:var(--card);
-            font-size:18divpx;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
+  .icon-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);
+            font-size:18px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
   .icon-btn:hover{transform:translateY(-1px);border-color:var(--brand)}
-  .tet-card{background:linear>
--gradient(135deg,#fff1f5,#ffe4ec);border:1px solid      #ffd6e3;
-            border-radius:var(--radius); </padding:14px 22px;text-align:right;box-shadow:var(--shadow)}
+  .tet-card{background:linear-gradient(135deg,#fff1f5,#ffe4ec);border:1px solid #ffd6e3;
+            border-radius:var(--radius);padding:14px 22px;text-align:right;box-shadow:var(--shadow)}
   [data-theme="dark"] .tet-card{background:linear-gradient(135deg,#3a1526,#2a1020);border-color:#5a1f35}
   .tet-top{font-size:12.5px;font-weight:700;color:#be123c;margin-bottom:2px}
   [data-theme="dark"] .tet-top{color:#fb7185}
@@ -73,12 +72,13 @@
   .vip-card{background:var(--card);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);
             border:1px solid var(--line);position:relative;overflow:hidden}
   .vip-card.highlight{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:0;box-shadow:var(--shadow-lg)}
-  .vip-card.highlight .vip-label,.vip-card.highlight .vip-sub{color:rgba(255,255,255,.8)}
+  .vip-card.highlight .vip-label,.vip-card.highlight .vip-sub{color:rgba(255,255,255,.85)}
   .vip-card.highlight .vip-value{color:#fff}
   .vip-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
   .vip-value{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15}
   .vip-sub{font-size:11.5px;color:var(--muted);margin-top:4px}
   .pos{color:var(--green)!important} .neg{color:var(--red)!important}
+  .dim{color:var(--muted)!important;opacity:.6}
 
   /* ===== LAYOUT ===== */
   .layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
@@ -89,14 +89,13 @@
         box-shadow:var(--shadow);border:1px solid var(--line);transition:background .3s}
   .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
   .card-head h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
-  .card-head h3{font-size:13px;font-weight:700;color:var(--muted)}
   .divider{height:1px;background:var(--line);margin:14px 0}
 
   /* ===== FORMS ===== */
   .field{display:block;margin-bottom:12px}
   .field>span{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
   input,select,button{font:inherit;color:inherit}
-  input[type=text],input[type=date],input[type=month],input[type=number],select{
+  input[type=text],input[type=date],input[type=number],select{
     width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;
     background:var(--card-2);outline:none;transition:.15s;font-size:14px;color:var(--ink)}
   input:focus,select:focus{border-color:var(--brand);background:var(--card);
@@ -105,110 +104,100 @@
   .money input{padding-right:32px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
   .money i{position:absolute;right:13px;top:50%;transform:translateY(-50%);
            font-style:normal;font-size:13px;color:var(--muted)}
+  .big-input{font-size:26px!important;padding:16px 42px 16px 16px!important;font-weight:800!important}
+  .big-input+i{font-size:16px!important;right:16px!important}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
   .btn.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;
                box-shadow:0 8px 20px -10px #6366f1}
   .btn.primary:hover{filter:brightness(1.07);transform:translateY(-1px)}
-  #monthPicker{width:auto;padding:8px 10px;font-size:13px;border-radius:10px}
+  .btn.big{padding:14px 16px;font-size:15px}
 
-  .calc-result{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-  .calc-item{background:var(--brand-soft);border-radius:12px;padding:10px 12px}
-  .calc-item span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:4px}
-  .calc-item b{font-size:16px;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums}
-  .afford{font-size:13px;line-height:1.5;color:var(--muted);background:var(--card-2);
-          border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
-  .afford b{color:var(--brand)}
+  .quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .quick button{background:var(--brand-soft);color:var(--brand);border:0;border-radius:9px;
+                padding:7px 11px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .quick button:hover{background:#dfe3ff;transform:translateY(-1px)}
+  .quick button.clear{background:var(--red-soft);color:var(--red)}
+  .quick button.clear:hover{background:#fbd5d6}
 
-  .side-preview{display:flex;justify-content:space-between;align-items:center;
-                background:var(--green-soft);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px}
-  .side-preview span{color:var(--muted);font-weight:600}
-  .side-preview b{color:var(--green);font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+  .today-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;
+               color:var(--brand);background:var(--brand-soft);padding:3px 8px;border-radius:99px}
 
-  /* ===== GOAL RING ===== */
-  .goal-progress{display:flex;gap:18px;align-items:center}
-  .goal-ring-wrap{position:relative;width:110px;height:110px;flex:none}
-  .goal-ring{width:100%;height:100%}
-  #goalRing{stroke:url(#goalGrad)}
-  .goal-pct{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;
-            font-weight:800;color:var(--brand);letter-spacing:-.02em}
-  .goal-info{flex:1;min-width:0}
-  .goal-line{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;
-             border-bottom:1px dashed var(--line)}
-  .goal-line:last-of-type{border-bottom:0}
-  .goal-line span{color:var(--muted)}
-  .goal-line b{font-weight:700;font-variant-numeric:tabular-nums}
-  .goal-hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+  /* ===== PROJECTION CARD ===== */
+  .proj-card{background:linear-gradient(135deg,#fafbff,#f0f3ff);border:1px solid var(--line)}
+  [data-theme="dark"] .proj-card{background:linear-gradient(135deg,#1a2340,#1f2550)}
+  .proj-empty{text-align:center;padding:20px 10px;color:var(--muted)}
+  .proj-empty .icon{font-size:40px;margin-bottom:8px}
+  .proj-empty h3{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:6px}
+  .proj-empty p{font-size:13px;line-height:1.6;max-width:280px;margin:0 auto}
+  .proj-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;
+            border-bottom:1px dashed var(--line);font-size:13.5px}
+  .proj-row:last-of-type{border-bottom:0}
+  .proj-row .lbl{color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
+  .proj-row .val{font-weight:800;font-variant-numeric:tabular-nums}
+  .proj-big{margin-top:14px;padding:16px;border-radius:14px;
+            background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;
+            box-shadow:0 12px 28px -14px #6366f1}
+  .proj-big .plabel{font-size:12.5px;font-weight:700;opacity:.9;margin-bottom:6px}
+  .proj-big .pvalue{font-size:30px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .proj-big .psub{font-size:12px;opacity:.85;margin-top:6px;line-height:1.5}
+  .dpw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+           background:var(--card-2);border:1px solid var(--line);border-radius:12px;
+           padding:8px 12px;margin-top:12px;font-size:12.5px}
+  .dpw-row span{color:var(--muted);font-weight:600}
+  .dpw-row input{width:60px;padding:5px 8px;text-align:center;font-weight:700;font-size:13px}
 
-  /* ===== STATS ===== */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .stat{background:var(--card-2);border:1px solid var(--line);border-radius:14px;padding:12px}
-  .stat span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
-  .stat b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .burn{margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--brand-soft);
-        font-size:12.5px;color:var(--muted);line-height:1.5}
-  .burn b{color:var(--brand);font-weight:700}
+  /* ===== CALENDAR ===== */
+  .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+  .cal-nav .month-lbl{font-weight:800;font-size:14px}
+  .cal-nav .nav-btns{display:flex;gap:6px}
+  .cal-nav button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);
+                  background:var(--card-2);cursor:pointer;font-size:14px;transition:.15s}
+  .cal-nav button:hover{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-dow{text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);padding:4px 0}
+  .cal-cell{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;
+            justify-content:center;padding:2px;background:var(--card-2);position:relative;
+            cursor:pointer;transition:.15s;border:1px solid transparent;min-height:38px}
+  .cal-cell:hover{border-color:var(--brand);transform:scale(1.04)}
+  .cal-cell.empty{background:transparent;cursor:default;pointer-events:none;border:0}
+  .cal-cell.today{outline:2px solid var(--brand);outline-offset:-2px}
+  .cal-cell.selected{border-color:var(--brand-2);border-width:2px}
+  .cal-day{font-weight:700;font-size:12px;line-height:1}
+  .cal-amt{font-size:8.5px;font-weight:800;margin-top:3px;line-height:1;
+           white-space:nowrap;letter-spacing:-.02em}
+  .cal-cell.income-high .cal-day,.cal-cell.income-high .cal-amt{color:#fff}
+  .cal-cell.income-mid .cal-amt{color:#065f46}
 
-  /* ===== DONUT ===== */
-  .donut-area{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}
-  .donut-wrap{position:relative;width:150px;height:150px}
-  .donut{width:100%;height:100%}
-  .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;
-                align-items:center;justify-content:center;pointer-events:none}
-  .donut-total{font-size:15px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-  .donut-label{font-size:10.5px;color:var(--muted);font-weight:600}
-  .budget-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;padding-right:4px}
-  .budget-row{background:var(--card-2);border-radius:10px;padding:8px 10px}
-  .budget-row.over{background:var(--red-soft)}
-  .budget-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px;gap:8px}
-  .budget-name{font-weight:700}
-  .budget-num{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums;font-size:11.5px}
-  .budget-row.over .budget-num{color:var(--red)}
-  .budget-bar-wrap{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:5px}
-  .budget-bar{height:100%;border-radius:99px;transition:width .5s}
-  .budget-edit{background:none;border:0;color:var(--brand);font-size:11px;font-weight:700;
-               cursor:pointer;padding:0;text-decoration:underline;opacity:.85}
-  .budget-edit:hover{opacity:1}
-
-  /* ===== FORECAST ===== */
-  .fc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-  .fc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-  .fc-box{border-radius:14px;padding:14px;background:linear-gradient(135deg,var(--brand-soft),#e4eaff);border:1px solid var(--line)}
-  [data-theme="dark"] .fc-box{background:linear-gradient(135deg,#1f2550,#1a2340)}
-  .fc-box.tet{background:linear-gradient(135deg,#fff0f4,#ffe3ec);border-color:#ffd9e5}
-  [data-theme="dark"] .fc-box.tet{background:linear-gradient(135deg,#3a1526,#2a1020);border-color:#5a1f35}
-  .fc-box span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
-  .fc-box span b{color:var(--ink)}
-  .fc-box .fc-big-val{font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-  .fc-box.small{padding:10px 12px}
-  .fc-box.small span{margin-bottom:4px}
-  .fc-box.small b{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
-  .hint{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.5}
-
-  /* ===== LIST ===== */
+  /* ===== HISTORY ===== */
   .list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding-right:4px}
   .item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
         border:1px solid var(--line);background:var(--card);transition:.15s}
   .item:hover{background:var(--card-2);border-color:var(--brand)}
-  .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none}
+  .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px;flex:none;
+       background:var(--green-soft);color:var(--green);font-weight:800}
   .meta{flex:1;min-width:0}
   .meta .name{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .meta .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
-  .amt{font-weight:800;font-size:14px;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .amt{font-weight:800;font-size:14.5px;color:var(--green);font-variant-numeric:tabular-nums;white-space:nowrap}
   .del{border:0;background:transparent;color:#c3cad8;font-size:18px;cursor:pointer;
        padding:2px 7px;border-radius:8px;line-height:1;transition:.15s}
   .del:hover{color:var(--red);background:var(--red-soft)}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px;line-height:1.6}
   .badge{background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:800;
          padding:3px 10px;border-radius:99px}
-  .empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px;line-height:1.6}
-  .empty-mini{font-size:12.5px;color:var(--muted);padding:6px 2px}
-  .mini-list{display:flex;flex-direction:column;gap:6px}
-  .mini-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
-             background:var(--card-2);border:1px solid var(--line);font-size:13px}
-  .mini-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
-  .mini-item b{color:var(--green);font-variant-numeric:tabular-nums;font-weight:700}
   .reset{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;opacity:.8}
   .reset:hover{color:var(--red);opacity:1}
+
+  /* ===== EXPENSE MINI ===== */
+  .exp-sum{display:flex;justify-content:space-between;font-size:12.5px;margin-top:10px;
+           padding:8px 12px;border-radius:10px;background:var(--red-soft);color:var(--red)}
+  .exp-sum b{font-weight:800}
+  .mini-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-height:200px;overflow:auto}
+  .mini-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
+             background:var(--card-2);border:1px solid var(--line);font-size:12.5px}
+  .mini-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+  .mini-item b{color:var(--red);font-variant-numeric:tabular-nums;font-weight:700}
 
   /* ===== RESPONSIVE ===== */
   @media (max-width:1000px){
@@ -220,40 +209,30 @@
     .topbar{flex-direction:column;align-items:stretch}
     .tet-card{text-align:left}
     .tet-days{justify-content:flex-start}
-    .stats{grid-template-columns:1fr 1fr}
-    .donut-area{grid-template-columns:1fr}
-    .donut-wrap{margin:0 auto}
-    .fc-grid,.fc-row{grid-template-columns:1fr}
     .card{padding:15px}
     .vip-value{font-size:18px}
+    .proj-big .pvalue{font-size:24px}
+    .cal-cell{min-height:34px}
+    .cal-amt{font-size:7.5px}
   }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <linearGradient id="goalGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#a78bfa"/>
-    </linearGradient>
-  </defs>
-</svg>
-
 <div class="wrap">
 
   <!-- ============ HEADER ============ -->
   <header class="topbar">
     <div class="brand">
-      <div class="logo">💰</div>
+      <div class="logo">💵</div>
       <div>
-        <h1>Sổ Chi Tiêu <span class="vip-tag">VIP</span></h1>
-        <p>Lương · làm thêm · mục tiêu Tết · dự đoán tương lai</p>
+        <h1>Sổ Thu Nhập Ngày <span class="vip-tag">VIP</span></h1>
+        <p>Ghi từng ngày · cộng dồn · dự đoán đến Tết</p>
       </div>
     </div>
     <div class="actions">
       <button class="icon-btn" id="themeBtn" title="Đổi giao diện">🌙</button>
-      <button class="icon-btn" id="exportBtn" title="Xuất dữ liệu JSON">⬇️</button>
-      <button class="icon-btn" id="importBtn" title="Nhập dữ liệu JSON">⬆️</button>
+      <button class="icon-btn" id="exportBtn" title="Xuất dữ liệu">⬇️</button>
+      <button class="icon-btn" id="importBtn" title="Nhập dữ liệu">⬆️</button>
       <input type="file" id="importFile" accept="application/json" hidden>
     </div>
     <div class="tet-card">
@@ -266,24 +245,24 @@
   <!-- ============ VIP STATS ============ -->
   <section class="vip-row">
     <div class="vip-card">
-      <div class="vip-label">💰 Lương / ngày</div>
-      <div class="vip-value" id="vipDaily">0 đ</div>
-      <div class="vip-sub" id="vipDailySub">–</div>
+      <div class="vip-label">📅 Hôm nay đã kiếm</div>
+      <div class="vip-value" id="vipToday">–</div>
+      <div class="vip-sub" id="vipTodaySub">Chưa nhập hôm nay</div>
     </div>
     <div class="vip-card">
-      <div class="vip-label">⏰ Lương / giờ</div>
-      <div class="vip-value" id="vipHourly">0 đ</div>
-      <div class="vip-sub" id="vipHourlySub">–</div>
+      <div class="vip-label">💰 Tổng đã kiếm</div>
+      <div class="vip-value" id="vipTotal">–</div>
+      <div class="vip-sub" id="vipTotalSub">Chưa có dữ liệu</div>
     </div>
     <div class="vip-card">
-      <div class="vip-label">🚀 Làm thêm tháng này</div>
-      <div class="vip-value pos" id="vipSide">0 đ</div>
-      <div class="vip-sub" id="vipSideSub">0 giờ</div>
+      <div class="vip-label">🔥 Chuỗi ngày làm</div>
+      <div class="vip-value" id="vipStreak">–</div>
+      <div class="vip-sub" id="vipStreakSub">Bắt đầu ghi để tính</div>
     </div>
     <div class="vip-card highlight">
-      <div class="vip-label">🏦 Tổng tích luỹ</div>
-      <div class="vip-value" id="vipSaved">0 đ</div>
-      <div class="vip-sub" id="vipSavedSub">–</div>
+      <div class="vip-label">🔮 Dự kiến đến Tết</div>
+      <div class="vip-value" id="vipForecast">–</div>
+      <div class="vip-sub" id="vipForecastSub">Cần nhập dữ liệu</div>
     </div>
   </section>
 
@@ -293,47 +272,56 @@
     <!-- ===== CỘT TRÁI ===== -->
     <div class="col-left">
 
-      <!-- Lương & thời gian -->
+      <!-- NHẬP THU NHẬP NGÀY -->
       <section class="card">
-        <div class="card-head"><h2>💼 Lương &amp; thời gian</h2></div>
-        <label class="field">
-          <span>Lương hàng tháng</span>
-          <div class="money"><input id="salary" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
-        </label>
-        <div class="two">
-          <label class="field">
-            <span>Ngày công / tháng</span>
-            <input id="workDays" type="number" min="1" max="31" value="26">
-          </label>
-          <label class="field">
-            <span>Giờ làm / ngày</span>
-            <input id="hoursPerDay" type="number" min="1" max="24" value="8">
-          </label>
-        </div>
-        <div class="calc-result">
-          <div class="calc-item"><span>≈ Lương / ngày</span><b id="calcDaily">0 đ</b></div>
-          <div class="calc-item"><span>≈ Lương / giờ</span><b id="calcHourly">0 đ</b></div>
+        <div class="card-head">
+          <h2>💵 Nhập thu nhập hôm nay</h2>
+          <span class="today-badge" id="formDateBadge">Hôm nay</span>
         </div>
 
-        <div class="divider"></div>
-        <div class="card-head"><h3>🛍️ Món đồ muốn mua?</h3></div>
         <label class="field">
-          <span>Giá món đồ</span>
-          <div class="money"><input id="wantPrice" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
+          <span>Số tiền kiếm được trong ngày</span>
+          <div class="money">
+            <input id="dayAmount" type="text" inputmode="numeric" placeholder="0" autocomplete="off" class="big-input">
+            <i>đ</i>
+          </div>
         </label>
-        <div class="afford" id="affordResult">Nhập giá món đồ để xem cần bao nhiêu ngày lsection>
 
-      <!-- Thêm chi tiêu -->
+        <div class="quick">
+          <button type="button" data-quick="50000">+50k</button>
+          <button type="button" data-quick="100000">+100k</button>
+          <button type="button" data-quick="200000">+200k</button>
+          <button type="button" data-quick="500000">+500k</button>
+          <button type="button" data-quick="1000000">+1tr</button>
+          <button type="button" class="clear" data-clear>Xoá</button>
+        </div>
+
+        <form id="dailyForm">
+          <div class="two">
+            <label class="field">
+              <span>Ngày</span>
+              <input id="dayDate" type="date">
+            </label>
+            <label class="field">
+              <span>Số giờ (tuỳ chọn)</span>
+              <input id="dayHours" type="number" min="0" step="0.5" placeholder="0">
+            </label>
+          </div>
+          <label class="field">
+            <span>Ghi chú (tuỳ chọn)</span>
+            <input id="dayNote" type="text" placeholder="Làm công ty, chạy grab, bán hàng..." autocomplete="off">
+          </label>
+          <button class="btn primary big" type="submit">+ Lưu thu nhập ngày này</button>
+        </form>
+      </section>
+
+      <!-- NHẬP CHI TIÊU -->
       <section class="card">
-        <div class="card-head"><h2>🧾 Thêm khoản chi</h2></div>
+        <div class="card-head"><h2>🧾 Nhập chi tiêu</h2></div>
         <form id="expenseForm">
           <label class="field">
             <span>Tên khoản chi</span>
             <input id="expName" type="text" placeholder="Ăn trưa, đổ xăng..." autocomplete="off">
-          </label>
-          <label class="field">
-            <span>Danh mục</span>
-            <select id="expCat"></select>
           </label>
           <div class="two">
             <label class="field">
@@ -347,148 +335,57 @@
           </div>
           <button class="btn primary" type="submit">+ Thêm khoản chi</button>
         </form>
-      </section>
-
-      <!-- Làm thêm -->
-      <section class="card">
-        <div class="card-head"><h2>🚀 Làm thêm (side gig)</h2></div>
-        <form id="sideForm">
-          <label class="field">
-            <span>Tên công việc</span>
-            <input id="sideName" type="text" placeholder="Freelance, gia sư, bán hàng..." autocomplete="off">
-          </label>
-          <div class="two">
-            <label class="field">
-              <span>Số giờ</span>
-              <input id="sideHours" type="number" min="0" step="0.5" placeholder="0">
-            </label>
-            <label class="field">
-              <span>Đơn giá / giờ</span>
-              <div class="money"><input id="sideRate" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
-            </label>
-          </div>
-          <label class="field">
-            <span>Ngày</span>
-            <input id="sideDate" type="date">
-          </label>
-          <div class="side-preview">
-            <span>Thành tiền:</span> <b id="sidePreview">0 đ</b>
-          </div>
-          <button class="btn primary" type="submit">+ Thêm làm thêm</button>
-        </form>
-        <div id="sideList" class="mini-list" style="margin-top:12px"></div>
-      </section>
-
-      <!-- Mục tiêu Tết -->
-      <section class="card">
-        <div class="card-head"><h2>🎯 Mục tiêu Tết</h2></div>
-        <label class="field">
-          <span>Số tiền muốn có vào Tết</span>
-          <div class="money"><input id="goalInput" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
-        </label>
-        <div class="goal-progress">
-          <div class="goal-ring-wrap">
-            <svg viewBox="0 0 100 100" class="goal-ring">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--line)" stroke-width="10"/>
-              <circle id="goalRing" cx="50" cy="50" r="42" fill="none" stroke-width="10"
-                      stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"
-                      transform="rotate(-90 50 50)" style="transition:stroke-dasharray .6s"/>
-            </svg>
-            <div class="goal-pct" id="goalPct">0%</div>
-          </div>
-          <div class="goal-info">
-            <div class="goal-line"><span>Đã có</span><b id="goalSaved">0 đ</b></div>
-            <div class="goal-line"><span>Mục tiêu</span><b id="goalTarget">0 đ</b></div>
-            <div class="goal-line"><span>Còn thiếu</span><b id="goalMissing" class="neg">0 đ</b></div>
-            <div class="goal-hint" id="goalHint">Đặt mục tiêu để theo dõi tiến độ.</div>
-          </div>
+        <div class="exp-sum" id="expSum">
+          <span>Tổng chi tháng này</span><b>0 đ</b>
         </div>
+        <div class="mini-list" id="expList"></div>
       </section>
+
     </div>
 
     <!-- ===== CỘT PHẢI ===== -->
     <div class="col-right">
 
-      <!-- Tháng này -->
+      <!-- TỔNG TỪ GIỜ ĐẾN TẾT -->
+      <section class="card proj-card">
+        <div class="card-head">
+          <h2>🎯 Tổng từ giờ đến Tết</h2>
+          <button class="icon-btn" id="goTodayBtn" title="Nhập hôm nay" style="width:34px;height:34px;font-size:15px">➕</button>
+        </div>
+        <div id="projContent"></div>
+      </section>
+
+      <!-- LỊCH THU NHẬP -->
+      <section class="card">
+        <div class="card-head"><h2>📅 Lịch thu nhập</h2></div>
+        <div class="cal-nav">
+          <button id="calPrev">‹</button>
+          <span class="month-lbl" id="calMonthLbl">–</span>
+          <button id="calNext">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <p style="font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5">
+          Nhấn vào ngày để điền nhanh vào form · Ô càng đậm = thu nhập càng cao
+        </p>
+      </section>
+
+      <!-- LỊCH SỬ -->
       <section class="card">
         <div class="card-head">
-          <h2>📊 Tháng này</h2>
-          <input type="month" id="monthPicker">
+          <h2>📋 Lịch sử thu nhập</h2>
+          <span class="badge" id="histCount">0</span>
         </div>
-        <div class="stats">
-          <div class="stat"><span>Thu nhập</span><b id="stIncome" class="pos">0 đ</b></div>
-          <div class="stat"><span>Chi tiêu</span><b id="stSpent" class="neg">0 đ</b></div>
-          <div class="stat"><span>Còn lại</span><b id="stLeft">0 đ</b></div>
-          <div class="stat"><span>So tháng trước</span><b id="stDelta">–</b></div>
-        </div>
-        <div class="burn" id="burnInfo"></div>
-      </section>
-
-      <!-- Donut + ngân sách -->
-      <section class="card">
-        <div class="card-head"><h2>🍩 Chi tiêu theo danh mục</h2></div>
-        <div class="donut-area">
-          <div class="donut-wrap">
-            <svg viewBox="0 0 100 100" class="donut" id="donut">
-              <circle cx="50" cy="50" r="40" fill="none" stroke="var(--line)" stroke-width="14"/>
-            </svg>
-            <div class="donut-center">
-              <div class="donut-total" id="donutTotal">0 đ</div>
-              <div class="donut-label">tổng chi</div>
-            </div>
-          </div>
-          <div class="budget-list" id="budgetList"></div>
-        </div>
-      </section>
-
-      <!-- Dự đoán -->
-      <section class="card">
-        <div class="card-head"><h2>🔮 Dự đoán tiết kiệm</h2></div>
-        <div class="fc-grid">
-          <div class="fc-box">
-            <span>Đến cuối năm <b id="fcYearLabel"></b></span>
-            <b id="fcYear" class="fc-big-val">0 đ</b>
-          </div>
-          <div class="fc-box tet">
-            <span>Đến Tết <b id="fcTetLabel"></b></span>
-            <b id="fcTet" class="fc-big-val">0 đ</b>
-          </div>
-        </div>
-        <div class="fc-row">
-          <div class="fc-box small"><span>Trung bình / tháng</span><b id="fcAvg">0 đ</b></div>
-          <div class="fc-box small"><span>Đã để dành</span><b id="fcSaved" class="pos">0 đ</b></div>
-        </div>
-        <p class="hint" id="fcHint"></p>
-      </section>
-
-      <!-- Danh sách chi tiêu -->
-      <section class="card">
-        <div class="card-head">
-          <h2>📋 Danh sách chi tiêu</h2>
-          <span class="badge" id="listCount">0</span>
-        </div>
-        <div id="expenseList" class="list"></div>
+        <div id="histList" class="list"></div>
         <div style="text-align:right;margin-top:14px">
           <button class="reset" id="resetBtn">Xoá toàn bộ dữ liệu</button>
         </div>
       </section>
+
     </div>
   </main>
 </div>
 
 <script>
-/* ==================== DANH MỤC ==================== */
-const CATS = {
-  food:      { label:'Ăn uống',  icon:'🍜', color:'#f59e0b' },
-  transport: { label:'Đi lại',   icon:'🛵', color:'#3b82f6' },
-  home:      { label:'Nhà cửa',  icon:'🏠', color:'#8b5cf6' },
-  shopping:  { label:'Mua sắm',  icon:'🛍️', color:'#ec4899' },
-  fun:       { label:'Giải trí', icon:'🎮', color:'#06b6d4' },
-  health:    { label:'Sức khỏe', icon:'💊', color:'#10b981' },
-  bill:      { label:'Hoá đơn',  icon:'📱', color:'#f97316' },
-  other:     { label:'Khác',     icon:'📦', color:'#6b7280' }
-};
-
 /* ==================== TẾT ==================== */
 const TET_DATES = {
   2025:{ d:'2025-01-29', name:'Ất Tỵ 2025' },
@@ -519,15 +416,13 @@ function fmtDate(iso){
   const [y,m,d] = iso.split('-');
   return `${d}/${m}/${y}`;
 }
-function monthDiff(a, b){
-  const [ay,am] = a.split('-').map(Number);
-  const [by,bm] = b.split('-').map(Number);
-  return (by-ay)*12 + (bm-am);
+function daysBetween(a, b){
+  return Math.round((b - a) / 86400000);
 }
-function addMonths(mk, n){
-  const [y,m] = mk.split('-').map(Number);
-  const d = new Date(y, m - 1 + n, 1);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+function formatShort(n){
+  if(n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'tr';
+  if(n >= 1000) return Math.round(n/1000) + 'k';
+  return Math.round(n).toString();
 }
 function attachMoney(input){
   input.addEventListener('input', () => {
@@ -548,11 +443,11 @@ function nextTet(){
 }
 
 /* ==================== STATE ==================== */
-const KEY = 'sochitieu_vip_v1';
+const KEY = 'sochitieu_daily_v1';
 let state = {
-  salary: 0, workDays: 26, hoursPerDay: 8,
-  savingsGoal: 0, budgets: {},
-  incomes: [], expenses: [],
+  dailyIncomes: [],   // {id, date, amount, hours, note, ts}
+  expenses: [],       // {id, name, amount, date, ts}
+  daysPerWeek: 5,
   theme: 'light'
 };
 
@@ -561,84 +456,74 @@ function load(){
     const raw = localStorage.getItem(KEY);
     if(raw){
       const d = JSON.parse(raw);
-      Object.assign(state, d);
-      state.budgets = d.budgets || {};
-      state.incomes = Array.isArray(d.incomes) ? d.incomes : [];
-      state.expenses = Array.isArray(d.expenses) ? d.expenses : [];
+      state.dailyIncomes = Array.isArray(d.dailyIncomes) ? d.dailyIncomes : [];
+      state.expenses     = Array.isArray(d.expenses)     ? d.expenses     : [];
+      state.daysPerWeek  = Number(d.daysPerWeek) || 5;
+      state.theme        = d.theme === 'dark' ? 'dark' : 'light';
       return;
     }
-    // migrate từ bản cũ
-    const old = localStorage.getItem('sochitieu_v2');
+    // Migration từ bản VIP cũ
+    const old = localStorage.getItem('sochitieu_vip_v1');
     if(old){
       const d = JSON.parse(old);
-      state.salary   = Number(d.salary) || 0;
-      state.incomes  = Array.isArray(d.incomes)  ? d.incomes  : [];
       state.expenses = Array.isArray(d.expenses) ? d.expenses : [];
+      state.dailyIncomes = (Array.isArray(d.incomes) ? d.incomes : []).map(i => ({
+        id: i.id || uid(),
+        date: i.date,
+        amount: i.amount || 0,
+        hours: i.hours || 0,
+        note: i.name || '',
+        ts: i.ts || Date.now()
+      }));
+      state.theme = d.theme === 'dark' ? 'dark' : 'light';
     }
-  }catch(e){ console.warn('Không đọc được dữ liệu', e); }
+  }catch(e){ console.warn('Lỗi đọc dữ liệu', e); }
 }
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
 }
 
-/* ==================== TÍNH TOÁN ==================== */
-const dailySalary  = () => state.salary / (state.workDays || 26);
-const hourlySalary = () => dailySalary() / (state.hoursPerDay || 8);
-
-function incomeForMonth(mk){
-  const extra = state.incomes
-    .filter(i => i.date.slice(0,7) === mk)
-    .reduce((s,i) => s + (i.amount || 0), 0);
-  return state.salary + extra;
-}
-function spentForMonth(mk){
-  return state.expenses
-    .filter(e => e.date.slice(0,7) === mk)
-    .reduce((s,e) => s + e.amount, 0);
-}
-function totalStats(){
-  const mk = currentMonth();
-  const months = new Set([mk]);
-  state.expenses.forEach(e => months.add(e.date.slice(0,7)));
-  state.incomes.forEach(i => months.add(i.date.slice(0,7)));
-  const sorted = [...months].sort();
-  const count = Math.max(1, monthDiff(sorted[0], mk) + 1);
-  const totalIncome = state.salary * count + state.incomes.reduce((s,i) => s + (i.amount||0), 0);
-  const totalSpent  = state.expenses.reduce((s,e) => s + e.amount, 0);
-  const saved = totalIncome - totalSpent;
-  return { saved, count, avg: saved / count };
-}
-
 /* ==================== KHỞI TẠO ==================== */
 load();
 
-$('#expCat').innerHTML = Object.entries(CATS)
-  .map(([k,c]) => `<option value="${k}">${c.icon} ${c.label}</option>`).join('');
-
 const today = todayISO();
-$('#expDate').value  = today;
-$('#sideDate').value = today;
-$('#monthPicker').value = currentMonth();
+$('#dayDate').value = today;
+$('#expDate').value = today;
 
-attachMoney($('#salary'));
+attachMoney($('#dayAmount'));
 attachMoney($('#expAmount'));
-attachMoney($('#sideRate'));
-attachMoney($('#goalInput'));
-attachMoney($('#wantPrice'));
+
+$('#dayAmount').addEventListener('input', updateQuickPreview);
 
 function applyTheme(){
   document.documentElement.setAttribute('data-theme', state.theme);
   $('#themeBtn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
 }
-function syncInputs(){
-  $('#salary').value       = state.salary ? nf.format(state.salary) : '';
-  $('#workDays').value     = state.workDays || 26;
-  $('#hoursPerDay').value  = state.hoursPerDay || 8;
-  $('#goalInput').value    = state.savingsGoal ? nf.format(state.savingsGoal) : '';
-  $('#monthPicker').value  = currentMonth();
-}
 applyTheme();
-syncInputs();
+
+function updateQuickPreview(){
+  // Hiển thị badge Hôm nay / ngày khác
+  const d = $('#dayDate').value;
+  const badge = $('#formDateBadge');
+  if(!d){
+    badge.textContent = 'Chưa chọn ngày';
+    badge.style.opacity = '.5';
+    return;
+  }
+  badge.style.opacity = '1';
+  if(d === today){
+    badge.textContent = '📅 Hôm nay';
+  } else if(d === todayISO().slice(0,0) + shiftDay(today, -1)){
+    badge.textContent = '📅 Hôm qua';
+  } else {
+    badge.textContent = '📅 ' + fmtDate(d);
+  }
+}
+function shiftDay(iso, delta){
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
 /* ==================== SỰ KIỆN ==================== */
 $('#themeBtn').addEventListener('click', () => {
@@ -650,10 +535,9 @@ $('#exportBtn').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `sochitieu-${todayISO()}.json`; a.click();
+  a.href = url; a.download = `thunhap-ngay-${todayISO()}.json`; a.click();
   URL.revokeObjectURL(url);
 });
-
 $('#importBtn').addEventListener('click', () => $('#importFile').click());
 $('#importFile').addEventListener('change', e => {
   const file = e.target.files[0]; if(!file) return;
@@ -662,11 +546,11 @@ $('#importFile').addEventListener('change', e => {
     try{
       const data = JSON.parse(ev.target.result);
       if(typeof data !== 'object') throw new Error('invalid');
-      state = { ...state, ...data };
-      state.budgets = data.budgets || {};
-      state.incomes = Array.isArray(data.incomes) ? data.incomes : state.incomes;
-      state.expenses = Array.isArray(data.expenses) ? data.expenses : state.expenses;
-      save(); syncInputs(); applyTheme(); render();
+      if(Array.isArray(data.dailyIncomes)) state.dailyIncomes = data.dailyIncomes;
+      if(Array.isArray(data.expenses))     state.expenses = data.expenses;
+      if(data.daysPerWeek) state.daysPerWeek = data.daysPerWeek;
+      if(data.theme) state.theme = data.theme;
+      save(); applyTheme(); render();
       alert('✅ Nhập dữ liệu thành công!');
     }catch(err){ alert('❌ File không hợp lệ!'); }
   };
@@ -674,115 +558,168 @@ $('#importFile').addEventListener('change', e => {
   e.target.value = '';
 });
 
-$('#salary').addEventListener('input', e => {
-  state.salary = parseMoney(e.target.value);
-  save(); render();
+// Quick amount buttons (cộng dồn)
+document.querySelectorAll('[data-quick]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const cur = parseMoney($('#dayAmount').value);
+    const add = parseInt(btn.dataset.quick, 10);
+    const next = cur + add;
+    $('#dayAmount').value = nf.format(next);
+    updateQuickPreview();
+  });
 });
-$('#workDays').addEventListener('input', e => {
-  state.workDays = Math.max(1, parseInt(e.target.value,10) || 26);
-  save(); render();
-});
-$('#hoursPerDay').addEventListener('input', e => {
-  state.hoursPerDay = Math.max(1, parseInt(e.target.value,10) || 8);
-  save(); render();
-});
-$('#wantPrice').addEventListener('input', renderAfford);
-
-$('#goalInput').addEventListener('input', e => {
-  state.savingsGoal = parseMoney(e.target.value);
-  save(); render();
+document.querySelector('[data-clear]').addEventListener('click', () => {
+  $('#dayAmount').value = '';
+  updateQuickPreview();
 });
 
+// Form nhập thu nhập ngày
+$('#dailyForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = parseMoney($('#dayAmount').value);
+  const date   = $('#dayDate').value || todayISO();
+  if(amount <= 0){ alert('Nhập số tiền lớn hơn 0 nhé!'); $('#dayAmount').focus(); return; }
+
+  state.dailyIncomes.push({
+    id: uid(), date, amount,
+    hours: parseFloat($('#dayHours').value) || 0,
+    note: $('#dayNote').value.trim(),
+    ts: Date.now()
+  });
+
+  // Reset form
+  $('#dayAmount').value = '';
+  $('#dayHours').value = '';
+  $('#dayNote').value = '';
+  $('#dayDate').value = today;
+  updateQuickPreview();
+
+  save(); render();
+});
+
+$('#goTodayBtn').addEventListener('click', () => {
+  $('#dayDate').value = today;
+  updateQuickPreview();
+  $('#dayAmount').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Chi tiêu
 $('#expenseForm').addEventListener('submit', e => {
   e.preventDefault();
   const amount = parseMoney($('#expAmount').value);
   const date   = $('#expDate').value || todayISO();
   if(amount <= 0){ alert('Nhập số tiền lớn hơn 0 nhé!'); $('#expAmount').focus(); return; }
+
   state.expenses.push({
     id: uid(),
     name: $('#expName').value.trim() || 'Khoản chi',
-    amount, cat: $('#expCat').value, date, ts: Date.now()
+    amount, date, ts: Date.now()
   });
-  $('#monthPicker').value = date.slice(0,7);
-  $('#expName').value = ''; $('#expAmount').value = '';
+  $('#expName').value = '';
+  $('#expAmount').value = '';
   save(); render();
 });
 
-$('#sideForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const name   = $('#sideName').value.trim() || 'Làm thêm';
-  const hours  = parseFloat($('#sideHours').value) || 0;
-  const rate   = parseMoney($('#sideRate').value);
-  const date   = $('#sideDate').value || todayISO();
-  const amount = (hours > 0 && rate > 0) ? hours * rate : rate;
-  if(amount <= 0){ alert('Nhập số tiền hoặc số giờ × đơn giá!'); return; }
-  state.incomes.push({ id: uid(), name, hours, rate, amount, date, ts: Date.now() });
-  $('#monthPicker').value = date.slice(0,7);
-  $('#sideName').value = ''; $('#sideHours').value = ''; $('#sideRate').value = '';
-  updateSidePreview();
-  save(); render();
-});
-
-function updateSidePreview(){
-  const hours = parseFloat($('#sideHours').value) || 0;
-  const rate  = parseMoney($('#sideRate').value);
-  const amount = (hours > 0 && rate > 0) ? hours * rate : rate;
-  $('#sidePreview').textContent = fmt(amount);
-}
-$('#sideHours').addEventListener('input', updateSidePreview);
-$('#sideRate').addEventListener('input', updateSidePreview);
-
-$('#monthPicker').addEventListener('change', render);
-
-$('#expenseList').addEventListener('click', e => {
-  const btn = e.target.closest('[data-del]'); if(!btn) return;
-  state.expenses = state.expenses.filter(x => x.id !== btn.dataset.del);
-  save(); render();
-});
-$('#sideList').addEventListener('click', e => {
+// Xoá thu nhập / chi tiêu
+$('#histList').addEventListener('click', e => {
   const btn = e.target.closest('[data-delinc]'); if(!btn) return;
-  state.incomes = state.incomes.filter(x => x.id !== btn.dataset.delinc);
+  state.dailyIncomes = state.dailyIncomes.filter(x => x.id !== btn.dataset.delinc);
+  save(); render();
+});
+$('#expList').addEventListener('click', e => {
+  const btn = e.target.closest('[data-delexp]'); if(!btn) return;
+  state.expenses = state.expenses.filter(x => x.id !== btn.dataset.delexp);
   save(); render();
 });
 
-$('#budgetList').addEventListener('click', e => {
-  const btn = e.target.closest('[data-cat]'); if(!btn) return;
-  const cat = btn.dataset.cat;
-  const cur = state.budgets[cat] || 0;
-  const input = prompt(`Ngân sách hàng tháng cho "${CATS[cat].label}" (đ).\nNhập 0 để xoá ngân sách:`, cur || '');
-  if(input === null) return;
-  const val = parseMoney(input);
-  if(val > 0) state.budgets[cat] = val;
-  else delete state.budgets[cat];
-  save(); render();
+// Lịch tháng
+let calMonth = currentMonth();
+$('#calPrev').addEventListener('click', () => { calMonth = shiftMonth(calMonth, -1); renderCalendar(); });
+$('#calNext').addEventListener('click', () => { calMonth = shiftMonth(calMonth, 1);  renderCalendar(); });
+function shiftMonth(mk, delta){
+  const [y,m] = mk.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+$('#calGrid').addEventListener('click', e => {
+  const cell = e.target.closest('.cal-cell[data-date]'); if(!cell) return;
+  $('#dayDate').value = cell.dataset.date;
+  updateQuickPreview();
+  $('#dayAmount').focus();
+  document.querySelectorAll('.cal-cell.selected').forEach(c => c.classList.remove('selected'));
+  cell.classList.add('selected');
 });
 
+// Reset
 $('#resetBtn').addEventListener('click', () => {
-  if(confirm('Xoá toàn bộ dữ liệu chi tiêu? Không thể hoàn tác!')){
-    state = { salary:0, workDays:26, hoursPerDay:8, savingsGoal:0,
-              budgets:{}, incomes:[], expenses:[], theme:state.theme };
-    save(); syncInputs(); render();
+  if(confirm('Xoá toàn bộ dữ liệu? Không thể hoàn tác!')){
+    state.dailyIncomes = [];
+    state.expenses = [];
+    save(); render();
   }
 });
+
+/* ==================== TÍNH TOÁN ==================== */
+function computeStats(){
+  const entries = state.dailyIncomes;
+  if(!entries.length){
+    return { empty:true, total:0, daysTracked:0, avgPerDay:0, todayTotal:0, streak:0, projected:0, daysUntilTet:0, workDaysLeft:0 };
+  }
+
+  const total = entries.reduce((s,e) => s + e.amount, 0);
+
+  // Tổng theo ngày
+  const byDate = {};
+  entries.forEach(e => {
+    byDate[e.date] = (byDate[e.date] || 0) + e.amount;
+  });
+  const dates = Object.keys(byDate).sort();
+  const daysTracked = dates.length;
+  const avgPerDay = total / daysTracked;
+
+  // Hôm nay
+  const todayTotal = byDate[todayISO()] || 0;
+
+  // Streak
+  const dateSet = new Set(dates);
+  let streak = 0;
+  let cursor = new Date(); cursor.setHours(0,0,0,0);
+  let curStr = todayISO();
+  if(!dateSet.has(curStr)) cursor.setDate(cursor.getDate() - 1);
+  while(true){
+    const s = `${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}-${String(cursor.getDate()).padStart(2,'0')}`;
+    if(dateSet.has(s)){ streak++; cursor.setDate(cursor.getDate() - 1); }
+    else break;
+  }
+
+  // Dự đoán đến Tết
+  const tet = nextTet();
+  const now = new Date(); now.setHours(0,0,0,0);
+  const daysUntilTet = Math.max(0, daysBetween(now, tet.date));
+  const weeksLeft = daysUntilTet / 7;
+  const workDaysLeft = Math.round(weeksLeft * state.daysPerWeek);
+  const projected = total + avgPerDay * workDaysLeft;
+
+  return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak,
+           projected, daysUntilTet, workDaysLeft, byDate, dates };
+}
 
 /* ==================== RENDER ==================== */
 function render(){
   renderTet();
   renderVip();
-  renderCalc();
-  renderStats();
-  renderDonut();
-  renderGoal();
-  renderForecast();
+  renderProjection();
+  renderCalendar();
+  renderHistory();
   renderExpenses();
-  renderSides();
 }
 
 /* --- Tết --- */
 function renderTet(){
   const t = nextTet();
   const now = new Date(); now.setHours(0,0,0,0);
-  const days = Math.round((t.date - now) / 86400000);
+  const days = Math.max(0, daysBetween(now, t.date));
   $('#tetName').textContent = t.name;
   $('#tetDays').textContent = days === 0 ? '🎉' : days;
   $('#tetDate').textContent = t.iso ? `(${fmtDate(t.iso)})` : '';
@@ -790,265 +727,203 @@ function renderTet(){
 
 /* --- VIP row --- */
 function renderVip(){
-  const daily  = dailySalary();
-  const hourly = hourlySalary();
-  $('#vipDaily').textContent  = daily  > 0 ? fmt(daily)  : '–';
-  $('#vipHourly').textContent = hourly > 0 ? fmt(hourly) : '–';
-  $('#vipDailySub').textContent  = `${state.workDays || 26} ngày công/tháng`;
-  $('#vipHourlySub').textContent = `${state.hoursPerDay || 8} giờ/ngày`;
+  const s = computeStats();
 
-  const mk = currentMonth();
-  const sides = state.incomes.filter(i => i.date.slice(0,7) === mk);
-  const sideTotal = sides.reduce((s,i) => s + (i.amount || 0), 0);
-  const sideHours = sides.reduce((s,i) => s + (i.hours || 0), 0);
-  $('#vipSide').textContent = fmt(sideTotal);
-  $('#vipSideSub').textContent = sideHours > 0 ? `${sideHours} giờ` : 'Chưa có';
+  const todayEl = $('#vipToday');
+  const totalEl = $('#vipTotal');
+  const streakEl = $('#vipStreak');
+  const fcastEl = $('#vipForecast');
 
-  const { saved, count } = totalStats();
-  const sEl = $('#vipSaved');
-  sEl.textContent = fmt(saved);
-  sEl.style.color = saved < 0 ? '#fecaca' : '#fff';
-  $('#vipSavedSub').textContent = `trong ${count} tháng`;
-}
-
-/* --- Lương/ngày & máy tính mua đồ --- */
-function renderCalc(){
-  const daily  = dailySalary();
-  const hourly = hourlySalary();
-  $('#calcDaily').textContent  = daily  > 0 ? fmt(daily)  : '0 đ';
-  $('#calcHourly').textContent = hourly > 0 ? fmt(hourly) : '0 đ';
-  renderAfford();
-}
-function renderAfford(){
-  const price = parseMoney($('#wantPrice').value);
-  const el = $('#affordResult');
-  if(price <= 0){
-    el.textContent = 'Nhập giá món đồ để xem cần bao nhiêu ngày lương.';
+  if(s.empty){
+    todayEl.textContent = '–'; todayEl.className = 'vip-value dim';
+    totalEl.textContent = '–'; totalEl.className = 'vip-value dim';
+    streakEl.textContent = '–'; streakEl.className = 'vip-value dim';
+    fcastEl.textContent = '–'; fcastEl.className = 'vip-value';
+    $('#vipTodaySub').textContent = 'Chưa nhập hôm nay';
+    $('#vipTotalSub').textContent = 'Chưa có dữ liệu';
+    $('#vipStreakSub').textContent = 'Bắt đầu ghi để tính';
+    $('#vipForecastSub').textContent = 'Cần nhập dữ liệu';
     return;
   }
-  const daily  = dailySalary();
-  const hourly = hourlySalary();
-  if(daily <= 0){
-    el.textContent = 'Nhập lương trước để tính toán nhé!';
-    return;
-  }
-  const days  = price / daily;
-  const hours = price / hourly;
-  el.innerHTML = `Cần <b>${days.toFixed(1)} ngày lương</b> (≈ <b>${hours.toFixed(1)} giờ làm</b>) để mua món đồ này.`;
+
+  todayEl.textContent = fmt(s.todayTotal);
+  todayEl.className = 'vip-value ' + (s.todayTotal > 0 ? 'pos' : 'dim');
+  $('#vipTodaySub').textContent = s.todayTotal > 0 ? 'Đã ghi hôm nay ✓' : 'Chưa nhập hôm nay';
+
+  totalEl.textContent = fmt(s.total);
+  totalEl.className = 'vip-value pos';
+  $('#vipTotalSub').textContent = `Trong ${s.daysTracked} ngày đã ghi`;
+
+  streakEl.textContent = s.streak + ' ngày';
+  streakEl.className = 'vip-value ' + (s.streak > 0 ? 'pos' : 'dim');
+  $('#vipStreakSub').textContent = s.streak > 0 ? '🔥 Tiếp tục phát huy!' : 'Hôm nay chưa ghi';
+
+  fcastEl.textContent = fmt(s.projected);
+  fcastEl.className = 'vip-value';
+  $('#vipForecastSub').textContent = `Còn ${s.daysUntilTet} ngày đến Tết`;
 }
 
-/* --- Tháng này --- */
-function renderStats(){
-  const mk = $('#monthPicker').value || currentMonth();
-  const income = incomeForMonth(mk);
-  const spent  = spentForMonth(mk);
-  const left   = income - spent;
-  const prevMk = addMonths(mk, -1);
-  const prevSpent = spentForMonth(prevMk);
+/* --- Projection card --- */
+function renderProjection(){
+  const s = computeStats();
+  const box = $('#projContent');
 
-  $('#stIncome').textContent = fmt(income);
-  $('#stSpent').textContent  = fmt(spent);
-  const leftEl = $('#stLeft');
-  leftEl.textContent = fmt(left);
-  leftEl.className = left >= 0 ? 'pos' : 'neg';
-
-  const deltaEl = $('#stDelta');
-  if(prevSpent > 0){
-    const pct = (spent - prevSpent) / prevSpent * 100;
-    const sign = pct > 0 ? '+' : '';
-    deltaEl.textContent = `${sign}${pct.toFixed(0)}%`;
-    deltaEl.className = pct > 0 ? 'neg' : 'pos';
-  } else {
-    deltaEl.textContent = '–';
-    deltaEl.className = '';
+  if(s.empty){
+    box.innerHTML = `
+      <div class="proj-empty">
+        <div class="icon">📝</div>
+        <h3>Chưa có dữ liệu</h3>
+        <p>Nhập thu nhập ngày đầu tiên ở form bên trái để xem tổng và dự đoán đến Tết.</p>
+      </div>`;
+    return;
   }
 
-  // burn rate
-  const [y,m] = mk.split('-').map(Number);
+  const tet = nextTet();
+  const avgPerDayWork = s.avgPerDay;
+  const projectedTet = s.projected;
+
+  box.innerHTML = `
+    <div class="proj-row">
+      <span class="lbl">💰 Đã kiếm được</span>
+      <span class="val pos">${fmt(s.total)}</span>
+    </div>
+    <div class="proj-row">
+      <span class="lbl">📅 Số ngày đã ghi</span>
+      <span class="val">${s.daysTracked} ngày</span>
+    </div>
+    <div class="proj-row">
+      <span class="lbl">📊 Trung bình mỗi ngày làm</span>
+      <span class="val">${fmt(avgPerDayWork)}</span>
+    </div>
+    <div class="proj-row">
+      <span class="lbl">⏳ Còn lại đến Tết</span>
+      <span class="val">${s.daysUntilTet} ngày</span>
+    </div>
+    <div class="proj-row">
+      <span class="lbl">🛠️ Số ngày làm dự kiến</span>
+      <span class="val">≈ ${s.workDaysLeft} ngày</span>
+    </div>
+
+    <div class="proj-big">
+      <div class="plabel">🔮 Dự kiến đến Tết ${tet.name}</div>
+      <div class="pvalue">${fmt(projectedTet)}</div>
+      <div class="psub">Dựa trên mức trung bình ${fmt(avgPerDayWork)}/ngày × ${s.workDaysLeft} ngày làm việc còn lại</div>
+    </div>
+
+    <div class="dpw-row">
+      <span>⚙️ Bạn làm mấy ngày / tuần?</span>
+      <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
+    </div>
+  `;
+
+  const dpw = $('#dpwInput');
+  dpw.addEventListener('input', e => {
+    const v = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
+    state.daysPerWeek = v;
+    save();
+    renderVip();
+    renderProjection();
+  });
+}
+
+/* --- Lịch thu nhập --- */
+function renderCalendar(){
+  const [y,m] = calMonth.split('-').map(Number);
+  const firstDay = new Date(y, m-1, 1).getDay(); // 0=CN
+  const startOffset = (firstDay + 6) % 7;         // T2=0
   const daysInMonth = new Date(y, m, 0).getDate();
-  const isCurrent = mk === currentMonth();
-  const daysElapsed = isCurrent ? new Date().getDate() : daysInMonth;
-  const burnInfo = $('#burnInfo');
-  if(spent > 0){
-    const perDay = spent / daysElapsed;
-    const projected = perDay * daysInMonth;
-    burnInfo.innerHTML = `🔥 Chi trung bình <b>${fmt(perDay)}/ngày</b>. Dự kiến cuối tháng: <b>${fmt(projected)}</b>`;
-  } else {
-    burnInfo.innerHTML = '💡 Chưa có chi tiêu trong tháng này.';
+
+  // Tổng theo ngày trong tháng
+  const dayTotals = {};
+  state.dailyIncomes.forEach(e => {
+    if(e.date.startsWith(calMonth)) dayTotals[e.date] = (dayTotals[e.date] || 0) + e.amount;
+  });
+  const maxAmt = Math.max(1, ...Object.values(dayTotals));
+
+  // Label
+  const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
+                      'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  $('#calMonthLbl').textContent = `${monthNames[m-1]} ${y}`;
+
+  const dow = ['T2','T3','T4','T5','T6','T7','CN'];
+  let html = dow.map(d => `<div class="cal-dow">${d}</div>`).join('');
+
+  for(let i=0; i<startOffset; i++) html += '<div class="cal-cell empty"></div>';
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const amt = dayTotals[dateStr] || 0;
+    const isToday = dateStr === todayISO();
+    const intensity = amt ? amt / maxAmt : 0;
+    let bg = 'transparent', cls = '';
+    if(amt){
+      const alpha = 0.18 + intensity * 0.72;
+      bg = `rgba(14, 164, 114, ${alpha.toFixed(2)})`;
+      cls = intensity > 0.45 ? 'income-high' : 'income-mid';
+    }
+    html += `<div class="cal-cell ${isToday?'today':''} ${cls}" data-date="${dateStr}" style="background:${bg}">
+      <span class="cal-day">${d}</span>
+      ${amt ? `<span class="cal-amt">${formatShort(amt)}</span>` : ''}
+    </div>`;
   }
+
+  $('#calGrid').innerHTML = html;
 }
 
-/* --- Donut + budget --- */
-function renderDonut(){
-  const mk = currentMonth();
-  const exps = state.expenses.filter(e => e.date.slice(0,7) === mk);
-  const total = exps.reduce((s,e) => s + e.amount, 0);
+/* --- Lịch sử thu nhập --- */
+function renderHistory(){
+  const items = [...state.dailyIncomes].sort((a,b) => b.date.localeCompare(a.date) || b.ts - a.ts);
+  $('#histCount').textContent = items.length;
 
-  const by = {};
-  exps.forEach(e => { by[e.cat] = (by[e.cat] || 0) + e.amount; });
-  const entries = Object.entries(by).sort((a,b) => b[1] - a[1]);
-
-  // Donut SVG
-  const donut = $('#donut');
-  let svg = `<circle cx="50" cy="50" r="40" fill="none" stroke="var(--line)" stroke-width="14"/>`;
-  if(total > 0){
-    let offset = 0;
-    entries.forEach(([k,v]) => {
-      const pct = v / total * 100;
-      const c = CATS[k] || CATS.other;
-      svg += `<circle cx="50" cy="50" r="40" fill="none" stroke="${c.color}" stroke-width="14"
-              pathLength="100" stroke-dasharray="${pct.toFixed(3)} ${(100-pct).toFixed(3)}"
-              stroke-dashoffset="${(-offset).toFixed(3)}"
-              transform="rotate(-90 50 50)" stroke-linecap="butt"/>`;
-      offset += pct;
-    });
-  }
-  donut.innerHTML = svg;
-  $('#donutTotal').textContent = fmt(total);
-
-  // Budget list
-  const allCats = new Set([
-    ...entries.map(e => e[0]),
-    ...Object.keys(state.budgets).filter(k => state.budgets[k] > 0)
-  ]);
-  const list = $('#budgetList');
-  if(!allCats.size){
-    list.innerHTML = '<div class="empty-mini">Chưa có chi tiêu tháng này.<br>Thêm khoản chi để xem thống kê nhé!</div>';
+  const el = $('#histList');
+  if(!items.length){
+    el.innerHTML = '<div class="empty">Chưa có thu nhập nào được ghi.<br>Nhập ngày đầu tiên ở cột trái nhé 👈</div>';
     return;
   }
-  list.innerHTML = [...allCats].map(k => {
-    const c = CATS[k] || CATS.other;
-    const spent = by[k] || 0;
-    const budget = state.budgets[k] || 0;
-    const pct = budget > 0 ? Math.min(100, spent / budget * 100) : 0;
-    const over = budget > 0 && spent > budget;
-    return `<div class="budget-row ${over ? 'over' : ''}">
-      <div class="budget-head">
-        <span class="budget-name">${c.icon} ${c.label}</span>
-        <span class="budget-num">${fmt(spent)}${budget ? ' / ' + fmt(budget) : ''}</span>
+
+  el.innerHTML = items.map(e => {
+    const sub = [];
+    if(e.note) sub.push(esc(e.note));
+    if(e.hours > 0) sub.push(`${e.hours} giờ`);
+    sub.push(fmtDate(e.date));
+    return `<div class="item">
+      <div class="ico">💵</div>
+      <div class="meta">
+        <div class="name">${e.note ? esc(e.note) : 'Thu nhập ngày'}</div>
+        <div class="sub">${sub.join(' · ')}</div>
       </div>
-      <div class="budget-bar-wrap">
-        <div class="budget-bar" style="width:${budget ? pct : 0}%;background:${over ? 'var(--red)' : c.color}"></div>
-      </div>
-      <button class="budget-edit" data-cat="${k}">${budget ? 'Sửa' : 'Đặt'} ngân sách</button>
+      <div class="amt">+${fmt(e.amount)}</div>
+      <button class="del" data-delinc="${e.id}" title="Xoá">×</button>
     </div>`;
   }).join('');
 }
 
-/* --- Mục tiêu Tết --- */
-function renderGoal(){
-  const { saved } = totalStats();
-  const goal = state.savingsGoal;
-  const pct = goal > 0 ? Math.min(100, saved / goal * 100) : 0;
-
-  $('#goalRing').setAttribute('stroke-dasharray', `${pct.toFixed(2)} 100`);
-  $('#goalPct').textContent = Math.round(pct) + '%';
-  $('#goalSaved').textContent = fmt(saved);
-  $('#goalTarget').textContent = fmt(goal);
-
-  const missing = Math.max(0, goal - saved);
-  const missingEl = $('#goalMissing');
-  missingEl.textContent = fmt(missing);
-  missingEl.className = missing > 0 ? 'neg' : 'pos';
-
-  const mk = currentMonth();
-  const t = nextTet();
-  const monthsLeft = Math.max(1, monthDiff(mk, t.key));
-  const hint = $('#goalHint');
-  if(goal <= 0){
-    hint.textContent = 'Đặt mục tiêu để theo dõi tiến độ.';
-  } else if(missing <= 0){
-    hint.textContent = '🎉 Bạn đã đạt mục tiêu Tết! Tuyệt vời!';
-  } else {
-    hint.textContent = `Cần tiết kiệm thêm ${fmt(missing / monthsLeft)}/tháng trong ${monthsLeft} tháng tới để đạt mục tiêu.`;
-  }
-}
-
-/* --- Dự đoán --- */
-function renderForecast(){
-  const mk = currentMonth();
-  const { saved, count, avg } = totalStats();
-
-  const savedEl = $('#fcSaved');
-  savedEl.textContent = fmt(saved);
-  savedEl.className = saved >= 0 ? 'pos' : 'neg';
-
-  const avgEl = $('#fcAvg');
-  avgEl.textContent = fmt(avg);
-  avgEl.className = avg >= 0 ? 'pos' : 'neg';
-
-  const now = new Date();
-  const monthsLeftYear = 12 - (now.getMonth() + 1);
-  $('#fcYear').textContent = fmt(saved + avg * monthsLeftYear);
-  $('#fcYearLabel').textContent = `(${now.getFullYear()})`;
-
-  const t = nextTet();
-  const monthsLeftTet = Math.max(0, monthDiff(mk, t.key));
-  $('#fcTet').textContent = fmt(saved + avg * monthsLeftTet);
-  $('#fcTetLabel').textContent = t.name;
-
-  let hint;
-  if(!state.salary){
-    hint = '💡 Nhập lương hàng tháng ở cột trái để dự đoán chính xác hơn.';
-  } else if(saved < 0){
-    hint = `⚠️ Bạn đang chi vượt thu ${fmt(Math.abs(saved))}. Hãy cân nhắc lại các khoản chi lớn!`;
-  } else {
-    hint = `Dựa trên ${count} tháng dữ liệu, mỗi tháng bạn để dành ~${fmt(avg)}. Còn ${monthsLeftTet} tháng đến Tết.`;
-  }
-  $('#fcHint').textContent = hint;
-}
-
-/* --- Danh sách chi tiêu --- */
+/* --- Chi tiêu --- */
 function renderExpenses(){
-  const mk = $('#monthPicker').value || currentMonth();
+  const mk = currentMonth();
   const items = state.expenses
     .filter(e => e.date.slice(0,7) === mk)
-    .sort((a,b) => b.date.localeCompare(a.date) || (b.ts||0) - (a.ts||0));
+    .sort((a,b) => b.date.localeCompare(a.date) || b.ts - a.ts);
 
-  $('#listCount').textContent = items.length;
-  const el = $('#expenseList');
+  const total = items.reduce((s,e) => s + e.amount, 0);
+  $('#expSum').innerHTML = `<span>Tổng chi tháng ${mk.split('-')[1]}/${mk.split('-')[0]}</span><b>${fmt(total)}</b>`;
+
+  const el = $('#expList');
   if(!items.length){
-    el.innerHTML = '<div class="empty">Tháng này chưa có khoản chi nào.<br>Thêm khoản chi đầu tiên ở cột trái nhé 👈</div>';
+    el.innerHTML = '';
     return;
   }
-  el.innerHTML = items.map(e => {
-    const c = CATS[e.cat] || CATS.other;
-    return `<div class="item">
-      <div class="ico" style="background:${c.color}1a">${c.icon}</div>
-      <div class="meta">
-        <div class="name">${esc(e.name)}</div>
-        <div class="sub">${c.label} · ${fmtDate(e.date)}</div>
-      </div>
-      <div class="amt">-${fmt(e.amount)}</div>
-      <button class="del" data-del="${e.id}" title="Xoá">×</button>
-    </div>`;
-  }).join('');
-}
-
-/* --- Danh sách làm thêm --- */
-function renderSides(){
-  const mk = $('#monthPicker').value || currentMonth();
-  const items = state.incomes
-    .filter(i => i.date.slice(0,7) === mk)
-    .sort((a,b) => b.date.localeCompare(a.date) || (b.ts||0) - (a.ts||0));
-  const el = $('#sideList');
-  if(!items.length){
-    el.innerHTML = '<div class="empty-mini">Chưa có làm thêm trong tháng này</div>';
-    return;
-  }
-  el.innerHTML = items.map(i => {
-    const hours = i.hours ? `${i.hours}h` : '';
-    const rate  = i.rate ? `× ${fmt(i.rate)}` : '';
-    const detail = [hours, rate].filter(Boolean).join(' ');
-    return `<div class="mini-item">
-      <span>${esc(i.name)}${detail ? ' · ' + detail : ''} · ${fmtDate(i.date)}</span>
-      <b>+${fmt(i.amount)}</b>
-      <button class="del" data-delinc="${i.id}" title="Xoá">×</button>
-    </div>`;
-  }).join('');
+  el.innerHTML = items.map(e => `
+    <div class="mini-item">
+      <span>${esc(e.name)} · ${fmtDate(e.date)}</span>
+      <b>-${fmt(e.amount)}</b>
+      <button class="del" data-delexp="${e.id}" title="Xoá">×</button>
+    </div>
+  `).join('');
 }
 
 /* ==================== CHẠY ==================== */
+updateQuickPreview();
 render();
 </script>
 </body>
