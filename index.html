@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sổ Thu Nhập Ngày – Tổng đến Tết</title>
+<title>Sổ Thu Nhập Ngày – Lưu Vĩnh Viễn</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -15,7 +15,7 @@
     --brand:#4f46e5; --brand-2:#8b5cf6; --brand-soft:#eef0ff;
     --green:#0ea472; --green-soft:#e6f7f0;
     --red:#e5484d; --red-soft:#fdeeee;
-    --amber:#f59e0b;
+    --amber:#f59e0b; --amber-soft:#fff8e6;
     --radius:18px;
     --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.18);
     --shadow-lg:0 1px 2px rgba(16,24,40,.06),0 20px 40px -20px rgba(79,70,229,.35);
@@ -29,7 +29,7 @@
     --brand:#818cf8; --brand-2:#a78bfa; --brand-soft:#1f2550;
     --green:#34d399; --green-soft:#0f2e26;
     --red:#f87171; --red-soft:#3a1a1c;
-    --amber:#fbbf24;
+    --amber:#fbbf24; --amber-soft:#3a2a15;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
     --shadow-lg:0 1px 2px rgba(0,0,0,.3),0 20px 40px -20px rgba(0,0,0,.6);
   }
@@ -40,21 +40,31 @@
     -webkit-font-smoothing:antialiased;
     transition:background .3s,color .3s;
   }
-  .wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  .wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 
   /* ===== HEADER ===== */
   .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:14px}
   .logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:27px;
         background:linear-gradient(135deg,#6366f1,#a78bfa);box-shadow:var(--shadow-lg);color:#fff}
-  .brand h1{font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
-  .vip-tag{font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:6px;
-           background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 4px 12px -4px #ef4444}
+  .brand h1{font-size:22px;letter-spacing:-.02em}
   .brand p{font-size:13px;color:var(--muted);margin-top:3px}
-  .actions{display:flex;gap:8px;align-items:center}
+  .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .icon-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);
             font-size:18px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
   .icon-btn:hover{transform:translateY(-1px);border-color:var(--brand)}
+  .save-indicator{
+    display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;
+    background:var(--green-soft);color:var(--green);font-size:12px;font-weight:700;
+    border:1px solid transparent;transition:.3s;white-space:nowrap;
+  }
+  .save-indicator.saving{background:var(--brand-soft);color:var(--brand)}
+  .save-indicator.error{background:var(--red-soft);color:var(--red)}
+  .save-indicator .dot{width:8px;height:8px;border-radius:50%;background:currentColor;
+    animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* ===== TẾT CARD ===== */
   .tet-card{background:linear-gradient(135deg,#fff1f5,#ffe4ec);border:1px solid #ffd6e3;
             border-radius:var(--radius);padding:14px 22px;text-align:right;box-shadow:var(--shadow)}
   [data-theme="dark"] .tet-card{background:linear-gradient(135deg,#3a1526,#2a1020);border-color:#5a1f35}
@@ -66,6 +76,43 @@
   .tet-days em{font-style:normal;font-size:13px;font-weight:700;color:#f43f5e}
   .tet-date{font-size:12px;color:#f43f5e;margin-top:2px}
   [data-theme="dark"] .tet-date{color:#fb7185}
+
+  /* ===== BACKUP BANNER ===== */
+  .backup-banner{
+    display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:16px;
+    background:linear-gradient(135deg,#fff8e6,#ffefd0);border:1.5px solid #fcd34d;
+    box-shadow:0 8px 20px -12px #f59e0b;flex-wrap:wrap;
+  }
+  [data-theme="dark"] .backup-banner{background:linear-gradient(135deg,#3a2a15,#2a1e0f);border-color:#b45309}
+  .backup-banner.safe{
+    background:linear-gradient(135deg,#e6f7f0,#d1fae5);border-color:#34d399;
+    box-shadow:0 8px 20px -12px #10b981;
+  }
+  [data-theme="dark"] .backup-banner.safe{background:linear-gradient(135deg,#0f2e26,#0a2019);border-color:#059669}
+  .backup-banner.prompt{
+    background:linear-gradient(135deg,#eef0ff,#e0e7ff);border-color:#818cf8;
+    box-shadow:0 8px 20px -12px #6366f1;
+  }
+  [data-theme="dark"] .backup-banner.prompt{background:linear-gradient(135deg,#1f2550,#181d3d);border-color:#4f46e5}
+  .banner-icon{font-size:28px;flex:none}
+  .banner-content{flex:1;min-width:220px}
+  .banner-title{font-size:14.5px;font-weight:800;margin-bottom:3px}
+  .banner-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
+  .banner-desc b{color:var(--ink);font-weight:700}
+  .banner-file{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;
+    background:rgba(0,0,0,.06);padding:2px 7px;border-radius:6px;margin-left:4px}
+  [data-theme="dark"] .banner-file{background:rgba(255,255,255,.1)}
+  .banner-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .banner-btn{
+    border:0;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:800;
+    cursor:pointer;transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:5px;
+  }
+  .banner-btn.primary{background:var(--green);color:#fff;box-shadow:0 4px 12px -4px var(--green)}
+  .banner-btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .banner-btn.secondary{background:rgba(0,0,0,.06);color:var(--ink)}
+  .banner-btn.secondary:hover{background:rgba(0,0,0,.12)}
+  [data-theme="dark"] .banner-btn.secondary{background:rgba(255,255,255,.1)}
+  [data-theme="dark"] .banner-btn.secondary:hover{background:rgba(255,255,255,.18)}
 
   /* ===== VIP ROW ===== */
   .vip-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -89,7 +136,6 @@
         box-shadow:var(--shadow);border:1px solid var(--line);transition:background .3s}
   .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
   .card-head h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
-  .divider{height:1px;background:var(--line);margin:14px 0}
 
   /* ===== FORMS ===== */
   .field{display:block;margin-bottom:12px}
@@ -199,6 +245,15 @@
   .mini-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
   .mini-item b{color:var(--red);font-variant-numeric:tabular-nums;font-weight:700}
 
+  /* ===== TOAST ===== */
+  .toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:12px;
+         background:var(--green);color:#fff;font-weight:700;font-size:13.5px;
+         box-shadow:0 12px 28px -8px rgba(0,0,0,.3);z-index:9999;opacity:0;transform:translateY(20px);
+         transition:.3s;pointer-events:none;max-width:calc(100vw - 40px)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast.error{background:var(--red)}
+  .toast.info{background:var(--brand)}
+
   /* ===== RESPONSIVE ===== */
   @media (max-width:1000px){
     .layout{grid-template-columns:1fr}
@@ -214,6 +269,8 @@
     .proj-big .pvalue{font-size:24px}
     .cal-cell{min-height:34px}
     .cal-amt{font-size:7.5px}
+    .backup-banner{padding:14px 16px}
+    .banner-icon{font-size:24px}
   }
 </style>
 </head>
@@ -225,15 +282,15 @@
     <div class="brand">
       <div class="logo">💵</div>
       <div>
-        <h1>Sổ Thu Nhập Ngày <span class="vip-tag">VIP</span></h1>
+        <h1>Sổ Thu Nhập Ngày</h1>
         <p>Ghi từng ngày · cộng dồn · dự đoán đến Tết</p>
       </div>
     </div>
     <div class="actions">
+      <div class="save-indicator" id="saveIndicator">
+        <span class="dot"></span><span id="saveText">Đang khởi động…</span>
+      </div>
       <button class="icon-btn" id="themeBtn" title="Đổi giao diện">🌙</button>
-      <button class="icon-btn" id="exportBtn" title="Xuất dữ liệu">⬇️</button>
-      <button class="icon-btn" id="importBtn" title="Nhập dữ liệu">⬆️</button>
-      <input type="file" id="importFile" accept="application/json" hidden>
     </div>
     <div class="tet-card">
       <div class="tet-top">🧧 Đếm ngược đến Tết <b id="tetName">–</b></div>
@@ -241,6 +298,9 @@
       <div class="tet-date" id="tetDate">–</div>
     </div>
   </header>
+
+  <!-- ============ BACKUP BANNER ============ -->
+  <div id="backupBanner"></div>
 
   <!-- ============ VIP STATS ============ -->
   <section class="vip-row">
@@ -268,8 +328,6 @@
 
   <!-- ============ MAIN ============ -->
   <main class="layout">
-
-    <!-- ===== CỘT TRÁI ===== -->
     <div class="col-left">
 
       <!-- NHẬP THU NHẬP NGÀY -->
@@ -278,7 +336,6 @@
           <h2>💵 Nhập thu nhập hôm nay</h2>
           <span class="today-badge" id="formDateBadge">Hôm nay</span>
         </div>
-
         <label class="field">
           <span>Số tiền kiếm được trong ngày</span>
           <div class="money">
@@ -286,7 +343,6 @@
             <i>đ</i>
           </div>
         </label>
-
         <div class="quick">
           <button type="button" data-quick="50000">+50k</button>
           <button type="button" data-quick="100000">+100k</button>
@@ -295,7 +351,6 @@
           <button type="button" data-quick="1000000">+1tr</button>
           <button type="button" class="clear" data-clear>Xoá</button>
         </div>
-
         <form id="dailyForm">
           <div class="two">
             <label class="field">
@@ -343,7 +398,6 @@
 
     </div>
 
-    <!-- ===== CỘT PHẢI ===== -->
     <div class="col-right">
 
       <!-- TỔNG TỪ GIỜ ĐẾN TẾT -->
@@ -385,6 +439,8 @@
   </main>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
 /* ==================== TẾT ==================== */
 const TET_DATES = {
@@ -404,7 +460,7 @@ const $ = s => document.querySelector(s);
 const nf = new Intl.NumberFormat('vi-VN');
 const fmt = n => nf.format(Math.round(n)) + ' đ';
 const parseMoney = s => parseInt(String(s).replace(/\D/g,''), 10) || 0;
-const uid = () => Math.random().toString(36).slice(2,10);
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function todayISO(){
@@ -416,9 +472,11 @@ function fmtDate(iso){
   const [y,m,d] = iso.split('-');
   return `${d}/${m}/${y}`;
 }
-function daysBetween(a, b){
-  return Math.round((b - a) / 86400000);
+function fmtTime(ts){
+  const d = new Date(ts);
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
 }
+function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
 function formatShort(n){
   if(n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'tr';
   if(n >= 1000) return Math.round(n/1000) + 'k';
@@ -429,6 +487,16 @@ function attachMoney(input){
     const digits = input.value.replace(/\D/g,'');
     input.value = digits ? nf.format(parseInt(digits,10)) : '';
   });
+}
+function shiftDay(iso, delta){
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function shiftMonth(mk, delta){
+  const [y,m] = mk.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 }
 function nextTet(){
   const today = new Date(); today.setHours(0,0,0,0);
@@ -442,159 +510,383 @@ function nextTet(){
   return { date:d, key:`${d.getFullYear()}-02`, name:'Tết', iso:'' };
 }
 
+function showToast(msg, type='info'){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type === 'info' ? '' : type);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
 /* ==================== STATE ==================== */
-const KEY = 'sochitieu_daily_v1';
-let state = {
-  dailyIncomes: [],   // {id, date, amount, hours, note, ts}
-  expenses: [],       // {id, name, amount, date, ts}
-  daysPerWeek: 5,
-  theme: 'light'
+const LS_KEY = 'sochitieu_persist_v1';
+const defaultState = {
+  dailyIncomes: [], expenses: [], daysPerWeek: 5, theme: 'light',
+  lastFileBackup: 0
 };
+let state = JSON.parse(JSON.stringify(defaultState));
+let db = null;
+let fileHandle = null;
 
-function load(){
-  try{
-    const raw = localStorage.getItem(KEY);
-    if(raw){
-      const d = JSON.parse(raw);
-      state.dailyIncomes = Array.isArray(d.dailyIncomes) ? d.dailyIncomes : [];
-      state.expenses     = Array.isArray(d.expenses)     ? d.expenses     : [];
-      state.daysPerWeek  = Number(d.daysPerWeek) || 5;
-      state.theme        = d.theme === 'dark' ? 'dark' : 'light';
-      return;
-    }
-    // Migration từ bản VIP cũ
-    const old = localStorage.getItem('sochitieu_vip_v1');
-    if(old){
-      const d = JSON.parse(old);
-      state.expenses = Array.isArray(d.expenses) ? d.expenses : [];
-      state.dailyIncomes = (Array.isArray(d.incomes) ? d.incomes : []).map(i => ({
-        id: i.id || uid(),
-        date: i.date,
-        amount: i.amount || 0,
-        hours: i.hours || 0,
-        note: i.name || '',
-        ts: i.ts || Date.now()
-      }));
-      state.theme = d.theme === 'dark' ? 'dark' : 'light';
-    }
-  }catch(e){ console.warn('Lỗi đọc dữ liệu', e); }
+/* ==================== INDEXEDDB ==================== */
+const DB_NAME = 'sochitieu_db';
+const DB_VERSION = 1;
+const STORE = 'kv';
+
+async function openDB(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
 }
-function save(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+async function idbGet(key){
+  if(!db) return null;
+  return new Promise((res) => {
+    try {
+      const req = db.transaction(STORE, 'readonly').objectStore(STORE).get(key);
+      req.onsuccess = () => res(req.result ?? null);
+      req.onerror = () => res(null);
+    } catch(e){ res(null); }
+  });
+}
+async function idbSet(key, value){
+  if(!db) return false;
+  return new Promise((res) => {
+    try {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(value, key);
+      tx.oncomplete = () => res(true);
+      tx.onerror = () => res(false);
+    } catch(e){ res(false); }
+  });
+}
+async function idbDel(key){
+  if(!db) return;
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).delete(key);
+  } catch(e){}
 }
 
-/* ==================== KHỞI TẠO ==================== */
-load();
+/* ==================== FILE SYSTEM ACCESS ==================== */
+const hasFileAPI = 'showSaveFilePicker' in window && 'showOpenFilePicker' in window;
 
+async function pickSaveFile(){
+  if(!hasFileAPI){
+    showToast('Trình duyệt không hỗ trợ. Hãy dùng Chrome/Edge.', 'error');
+    return false;
+  }
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: `so-thu-nhap-${todayISO()}.json`,
+      types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }]
+    });
+    fileHandle = handle;
+    await idbSet('fileHandle', handle);
+    const ok = await writeToFile(true);
+    if(ok){
+      showToast('✅ Đã bật lưu vĩnh viễn!');
+      state.lastFileBackup = Date.now();
+      await persistState();
+      updateBackupUI('active');
+    }
+    return ok;
+  } catch(e){
+    if(e.name !== 'AbortError') console.error(e);
+    return false;
+  }
+}
+
+async function writeToFile(force=false){
+  if(!fileHandle) return false;
+  try {
+    if(!force){
+      const perm = await fileHandle.queryPermission({ mode:'readwrite' });
+      if(perm !== 'granted') return false;
+    }
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify({
+      _meta: { app: 'so-thu-nhap', version: 1, savedAt: new Date().toISOString() },
+      state
+    }, null, 2));
+    await writable.close();
+    state.lastFileBackup = Date.now();
+    return true;
+  } catch(e){
+    console.error('File write failed', e);
+    return false;
+  }
+}
+
+async function pickOpenFile(){
+  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ.', 'error'); return; }
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }],
+      multiple: false
+    });
+    const file = await handle.getFile();
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const newState = parsed.state || parsed;
+    if(!newState || typeof newState !== 'object') throw new Error('invalid');
+    if(!confirm('Nhập dữ liệu từ file? Dữ liệu hiện tại sẽ được thay thế.')) return;
+    state = { ...defaultState, ...newState, theme: state.theme };
+    await persistState();
+    syncInputs();
+    applyTheme();
+    render();
+    showToast('✅ Đã nhập dữ liệu từ file!');
+    if(!fileHandle){
+      fileHandle = handle;
+      await idbSet('fileHandle', handle);
+      updateBackupUI('active');
+    }
+  } catch(e){
+    if(e.name !== 'AbortError'){ console.error(e); showToast('File không hợp lệ!', 'error'); }
+  }
+}
+
+async function checkPermission(){
+  if(!fileHandle) return 'none';
+  try {
+    const opts = { mode: 'readwrite' };
+    if(await fileHandle.queryPermission(opts) === 'granted') return 'granted';
+    if(await fileHandle.queryPermission(opts) === 'denied') return 'denied';
+    return 'prompt';
+  } catch(e){ return 'none'; }
+}
+async function requestPermission(){
+  if(!fileHandle) return false;
+  try {
+    return (await fileHandle.requestPermission({ mode: 'readwrite' })) === 'granted';
+  } catch(e){ return false; }
+}
+
+function downloadBackup(){
+  const data = {
+    _meta: { app: 'so-thu-nhap', version: 1, savedAt: new Date().toISOString() },
+    state
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `so-thu-nhap-${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  state.lastFileBackup = Date.now();
+  persistState();
+  showToast('📥 Đã tải file backup');
+}
+
+/* ==================== SAVE ENGINE ==================== */
+let lastSaveTs = 0;
+let saveQueued = false;
+let savingNow = false;
+
+function updateSaveIndicator(status='saved'){
+  const el = $('#saveIndicator');
+  const txt = $('#saveText');
+  el.classList.remove('saving','error');
+  if(status === 'saving'){
+    el.classList.add('saving');
+    txt.textContent = 'Đang lưu…';
+  } else if(status === 'error'){
+    el.classList.add('error');
+    txt.textContent = 'Lỗi lưu!';
+  } else if(fileHandle){
+    txt.textContent = `Đã lưu file · ${fmtTime(lastSaveTs || Date.now())}`;
+  } else {
+    txt.textContent = `Đã lưu tạm · ${fmtTime(lastSaveTs || Date.now())}`;
+  }
+}
+
+async function persistState(){
+  const snapshot = JSON.parse(JSON.stringify(state));
+  // 1. localStorage
+  try { localStorage.setItem(LS_KEY, JSON.stringify(snapshot)); } catch(e){}
+  // 2. IndexedDB
+  await idbSet('state', snapshot);
+  // 3. File (nếu đã bật)
+  if(fileHandle){
+    const ok = await writeToFile();
+    lastSaveTs = Date.now();
+    updateSaveIndicator(ok ? 'saved' : 'error');
+  } else {
+    lastSaveTs = Date.now();
+    updateSaveIndicator('saved');
+  }
+  updateBackupUI(fileHandle ? 'active' : 'none');
+}
+
+async function queueSave(){
+  if(savingNow){ saveQueued = true; return; }
+  savingNow = true;
+  updateSaveIndicator('saving');
+  try { await persistState(); }
+  finally {
+    savingNow = false;
+    if(saveQueued){ saveQueued = false; queueSave(); }
+  }
+}
+
+/* ==================== INIT ==================== */
 const today = todayISO();
 $('#dayDate').value = today;
 $('#expDate').value = today;
-
 attachMoney($('#dayAmount'));
 attachMoney($('#expAmount'));
-
-$('#dayAmount').addEventListener('input', updateQuickPreview);
 
 function applyTheme(){
   document.documentElement.setAttribute('data-theme', state.theme);
   $('#themeBtn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
 }
-applyTheme();
-
+function syncInputs(){
+  $('#dayDate').value = today;
+  $('#expDate').value = today;
+  updateQuickPreview();
+}
 function updateQuickPreview(){
-  // Hiển thị badge Hôm nay / ngày khác
   const d = $('#dayDate').value;
   const badge = $('#formDateBadge');
-  if(!d){
-    badge.textContent = 'Chưa chọn ngày';
-    badge.style.opacity = '.5';
+  if(!d){ badge.textContent = 'Chưa chọn ngày'; badge.style.opacity = '.5'; return; }
+  badge.style.opacity = '1';
+  if(d === today) badge.textContent = '📅 Hôm nay';
+  else if(d === shiftDay(today, -1)) badge.textContent = '📅 Hôm qua';
+  else badge.textContent = '📅 ' + fmtDate(d);
+}
+
+/* ==================== BACKUP UI ==================== */
+async function updateBackupUI(mode){
+  const banner = $('#backupBanner');
+  if(!banner) return;
+
+  if(!hasFileAPI){
+    banner.innerHTML = `
+      <div class="backup-banner">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-content">
+          <div class="banner-title">Trình duyệt này không hỗ trợ lưu file tự động</div>
+          <div class="banner-desc">Dữ liệu chỉ lưu trên trình duyệt. Hãy <b>tải backup thủ công</b> thường xuyên để không mất dữ liệu. Khuyến nghị dùng <b>Chrome/Edge</b> để lưu vĩnh viễn.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" id="bDownload">📥 Tải backup</button>
+          <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+        </div>
+      </div>`;
+    $('#bDownload').onclick = downloadBackup;
+    $('#bImport').onclick = pickOpenFile;
     return;
   }
-  badge.style.opacity = '1';
-  if(d === today){
-    badge.textContent = '📅 Hôm nay';
-  } else if(d === todayISO().slice(0,0) + shiftDay(today, -1)){
-    badge.textContent = '📅 Hôm qua';
-  } else {
-    badge.textContent = '📅 ' + fmtDate(d);
+
+  if(mode === 'active'){
+    let name = 'so-thu-nhap.json';
+    try { if(fileHandle) name = fileHandle.name; } catch(e){}
+    const last = state.lastFileBackup ? new Date(state.lastFileBackup) : null;
+    const timeStr = last ? `${fmtTime(last.getTime())} ngày ${last.getDate()}/${last.getMonth()+1}` : 'vừa xong';
+    banner.innerHTML = `
+      <div class="backup-banner safe">
+        <div class="banner-icon">✅</div>
+        <div class="banner-content">
+          <div class="banner-title">Đang lưu vĩnh viễn vào file <span class="banner-file">${esc(name)}</span></div>
+          <div class="banner-desc">Mỗi thay đổi đều được ghi ngay vào file này. Lần lưu cuối: <b>${timeStr}</b>. Bạn có thể mở file bằng Notepad, copy sang Google Drive, USB… dữ liệu sẽ không mất.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn secondary" id="bSaveNow">💾 Lưu ngay</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải bản sao</button>
+          <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+        </div>
+      </div>`;
+    $('#bSaveNow').onclick = async () => { await persistState(); showToast('💾 Đã lưu!'); };
+    $('#bDownload').onclick = downloadBackup;
+    $('#bImport').onclick = pickOpenFile;
+    return;
   }
-}
-function shiftDay(iso, delta){
-  const d = new Date(iso + 'T00:00:00');
-  d.setDate(d.getDate() + delta);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  if(mode === 'prompt'){
+    banner.innerHTML = `
+      <div class="backup-banner prompt">
+        <div class="banner-icon">🔓</div>
+        <div class="banner-content">
+          <div class="banner-title">File backup đang tạm dừng</div>
+          <div class="banner-desc">Trình duyệt cần bạn cấp lại quyền ghi vào file. Nhấn nút bên phải để tiếp tục lưu tự động.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" id="bGrant">🔓 Bật lại lưu file</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
+          <button class="banner-btn secondary" id="bNew">📁 Chọn file khác</button>
+        </div>
+      </div>`;
+    $('#bGrant').onclick = async () => {
+      const ok = await requestPermission();
+      if(ok){ showToast('✅ Đã bật lại lưu file!'); await persistState(); updateBackupUI('active'); }
+      else showToast('Chưa được cấp quyền.', 'error');
+    };
+    $('#bDownload').onclick = downloadBackup;
+    $('#bNew').onclick = pickSaveFile;
+    return;
+  }
+
+  // mode = 'none'
+  banner.innerHTML = `
+    <div class="backup-banner">
+      <div class="banner-icon">🔒</div>
+      <div class="banner-content">
+        <div class="banner-title">Bật lưu vĩnh viễn để không mất dữ liệu</div>
+        <div class="banner-desc">Hiện dữ liệu chỉ lưu trong trình duyệt này. Nếu bạn <b>xoá cache</b>, <b>đổi máy</b> hay <b>dùng ẩn danh</b> — dữ liệu có thể mất. Nhấn nút để lưu vào <b>1 file thật trên máy</b>, mọi thay đổi tự động ghi vào file đó.</div>
+      </div>
+      <div class="banner-actions">
+        <button class="banner-btn primary" id="bEnable">🔒 Bật lưu vĩnh viễn</button>
+        <button class="banner-btn secondary" id="bDownload">📥 Tải backup thủ công</button>
+        <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+      </div>
+    </div>`;
+  $('#bEnable').onclick = pickSaveFile;
+  $('#bDownload').onclick = downloadBackup;
+  $('#bImport').onclick = pickOpenFile;
 }
 
 /* ==================== SỰ KIỆN ==================== */
 $('#themeBtn').addEventListener('click', () => {
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  save(); applyTheme();
+  applyTheme();
+  queueSave();
 });
 
-$('#exportBtn').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `thunhap-ngay-${todayISO()}.json`; a.click();
-  URL.revokeObjectURL(url);
-});
-$('#importBtn').addEventListener('click', () => $('#importFile').click());
-$('#importFile').addEventListener('change', e => {
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try{
-      const data = JSON.parse(ev.target.result);
-      if(typeof data !== 'object') throw new Error('invalid');
-      if(Array.isArray(data.dailyIncomes)) state.dailyIncomes = data.dailyIncomes;
-      if(Array.isArray(data.expenses))     state.expenses = data.expenses;
-      if(data.daysPerWeek) state.daysPerWeek = data.daysPerWeek;
-      if(data.theme) state.theme = data.theme;
-      save(); applyTheme(); render();
-      alert('✅ Nhập dữ liệu thành công!');
-    }catch(err){ alert('❌ File không hợp lệ!'); }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-// Quick amount buttons (cộng dồn)
 document.querySelectorAll('[data-quick]').forEach(btn => {
   btn.addEventListener('click', () => {
     const cur = parseMoney($('#dayAmount').value);
-    const add = parseInt(btn.dataset.quick, 10);
-    const next = cur + add;
+    const next = cur + parseInt(btn.dataset.quick, 10);
     $('#dayAmount').value = nf.format(next);
-    updateQuickPreview();
   });
 });
 document.querySelector('[data-clear]').addEventListener('click', () => {
   $('#dayAmount').value = '';
-  updateQuickPreview();
 });
 
-// Form nhập thu nhập ngày
+$('#dayAmount').addEventListener('input', updateQuickPreview);
+$('#dayDate').addEventListener('change', updateQuickPreview);
+
 $('#dailyForm').addEventListener('submit', e => {
   e.preventDefault();
   const amount = parseMoney($('#dayAmount').value);
   const date   = $('#dayDate').value || todayISO();
   if(amount <= 0){ alert('Nhập số tiền lớn hơn 0 nhé!'); $('#dayAmount').focus(); return; }
-
   state.dailyIncomes.push({
     id: uid(), date, amount,
     hours: parseFloat($('#dayHours').value) || 0,
     note: $('#dayNote').value.trim(),
     ts: Date.now()
   });
-
-  // Reset form
-  $('#dayAmount').value = '';
-  $('#dayHours').value = '';
-  $('#dayNote').value = '';
-  $('#dayDate').value = today;
-  updateQuickPreview();
-
-  save(); render();
+  $('#dayAmount').value = ''; $('#dayHours').value = ''; $('#dayNote').value = '';
+  $('#dayDate').value = today; updateQuickPreview();
+  queueSave(); render();
 });
 
 $('#goTodayBtn').addEventListener('click', () => {
@@ -604,44 +896,34 @@ $('#goTodayBtn').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Chi tiêu
 $('#expenseForm').addEventListener('submit', e => {
   e.preventDefault();
   const amount = parseMoney($('#expAmount').value);
   const date   = $('#expDate').value || todayISO();
   if(amount <= 0){ alert('Nhập số tiền lớn hơn 0 nhé!'); $('#expAmount').focus(); return; }
-
   state.expenses.push({
     id: uid(),
     name: $('#expName').value.trim() || 'Khoản chi',
     amount, date, ts: Date.now()
   });
-  $('#expName').value = '';
-  $('#expAmount').value = '';
-  save(); render();
+  $('#expName').value = ''; $('#expAmount').value = '';
+  queueSave(); render();
 });
 
-// Xoá thu nhập / chi tiêu
 $('#histList').addEventListener('click', e => {
   const btn = e.target.closest('[data-delinc]'); if(!btn) return;
   state.dailyIncomes = state.dailyIncomes.filter(x => x.id !== btn.dataset.delinc);
-  save(); render();
+  queueSave(); render();
 });
 $('#expList').addEventListener('click', e => {
   const btn = e.target.closest('[data-delexp]'); if(!btn) return;
   state.expenses = state.expenses.filter(x => x.id !== btn.dataset.delexp);
-  save(); render();
+  queueSave(); render();
 });
 
-// Lịch tháng
 let calMonth = currentMonth();
 $('#calPrev').addEventListener('click', () => { calMonth = shiftMonth(calMonth, -1); renderCalendar(); });
 $('#calNext').addEventListener('click', () => { calMonth = shiftMonth(calMonth, 1);  renderCalendar(); });
-function shiftMonth(mk, delta){
-  const [y,m] = mk.split('-').map(Number);
-  const d = new Date(y, m - 1 + delta, 1);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-}
 $('#calGrid').addEventListener('click', e => {
   const cell = e.target.closest('.cal-cell[data-date]'); if(!cell) return;
   $('#dayDate').value = cell.dataset.date;
@@ -651,49 +933,39 @@ $('#calGrid').addEventListener('click', e => {
   cell.classList.add('selected');
 });
 
-// Reset
 $('#resetBtn').addEventListener('click', () => {
-  if(confirm('Xoá toàn bộ dữ liệu? Không thể hoàn tác!')){
-    state.dailyIncomes = [];
-    state.expenses = [];
-    save(); render();
-  }
+  if(!confirm('Xoá toàn bộ dữ liệu? Không thể hoàn tác!\n\n(Dữ liệu file backup cũ vẫn còn nếu bạn đã bật lưu file)')) return;
+  if(!confirm('Chắc chắn xoá? Nhấn OK để xoá hết.')) return;
+  state.dailyIncomes = []; state.expenses = [];
+  queueSave(); render();
+  showToast('Đã xoá toàn bộ dữ liệu', 'error');
 });
 
 /* ==================== TÍNH TOÁN ==================== */
 function computeStats(){
   const entries = state.dailyIncomes;
   if(!entries.length){
-    return { empty:true, total:0, daysTracked:0, avgPerDay:0, todayTotal:0, streak:0, projected:0, daysUntilTet:0, workDaysLeft:0 };
+    return { empty:true, total:0, daysTracked:0, avgPerDay:0, todayTotal:0,
+             streak:0, projected:0, daysUntilTet:0, workDaysLeft:0 };
   }
-
   const total = entries.reduce((s,e) => s + e.amount, 0);
-
-  // Tổng theo ngày
   const byDate = {};
-  entries.forEach(e => {
-    byDate[e.date] = (byDate[e.date] || 0) + e.amount;
-  });
+  entries.forEach(e => { byDate[e.date] = (byDate[e.date] || 0) + e.amount; });
   const dates = Object.keys(byDate).sort();
   const daysTracked = dates.length;
   const avgPerDay = total / daysTracked;
-
-  // Hôm nay
   const todayTotal = byDate[todayISO()] || 0;
 
-  // Streak
   const dateSet = new Set(dates);
   let streak = 0;
-  let cursor = new Date(); cursor.setHours(0,0,0,0);
-  let curStr = todayISO();
-  if(!dateSet.has(curStr)) cursor.setDate(cursor.getDate() - 1);
+  const cursor = new Date(); cursor.setHours(0,0,0,0);
+  if(!dateSet.has(todayISO())) cursor.setDate(cursor.getDate() - 1);
   while(true){
     const s = `${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}-${String(cursor.getDate()).padStart(2,'0')}`;
     if(dateSet.has(s)){ streak++; cursor.setDate(cursor.getDate() - 1); }
     else break;
   }
 
-  // Dự đoán đến Tết
   const tet = nextTet();
   const now = new Date(); now.setHours(0,0,0,0);
   const daysUntilTet = Math.max(0, daysBetween(now, tet.date));
@@ -715,7 +987,6 @@ function render(){
   renderExpenses();
 }
 
-/* --- Tết --- */
 function renderTet(){
   const t = nextTet();
   const now = new Date(); now.setHours(0,0,0,0);
@@ -725,14 +996,10 @@ function renderTet(){
   $('#tetDate').textContent = t.iso ? `(${fmtDate(t.iso)})` : '';
 }
 
-/* --- VIP row --- */
 function renderVip(){
   const s = computeStats();
-
-  const todayEl = $('#vipToday');
-  const totalEl = $('#vipTotal');
-  const streakEl = $('#vipStreak');
-  const fcastEl = $('#vipForecast');
+  const todayEl = $('#vipToday'), totalEl = $('#vipTotal');
+  const streakEl = $('#vipStreak'), fcastEl = $('#vipForecast');
 
   if(s.empty){
     todayEl.textContent = '–'; todayEl.className = 'vip-value dim';
@@ -745,7 +1012,6 @@ function renderVip(){
     $('#vipForecastSub').textContent = 'Cần nhập dữ liệu';
     return;
   }
-
   todayEl.textContent = fmt(s.todayTotal);
   todayEl.className = 'vip-value ' + (s.todayTotal > 0 ? 'pos' : 'dim');
   $('#vipTodaySub').textContent = s.todayTotal > 0 ? 'Đã ghi hôm nay ✓' : 'Chưa nhập hôm nay';
@@ -759,15 +1025,12 @@ function renderVip(){
   $('#vipStreakSub').textContent = s.streak > 0 ? '🔥 Tiếp tục phát huy!' : 'Hôm nay chưa ghi';
 
   fcastEl.textContent = fmt(s.projected);
-  fcastEl.className = 'vip-value';
   $('#vipForecastSub').textContent = `Còn ${s.daysUntilTet} ngày đến Tết`;
 }
 
-/* --- Projection card --- */
 function renderProjection(){
   const s = computeStats();
   const box = $('#projContent');
-
   if(s.empty){
     box.innerHTML = `
       <div class="proj-empty">
@@ -777,11 +1040,7 @@ function renderProjection(){
       </div>`;
     return;
   }
-
   const tet = nextTet();
-  const avgPerDayWork = s.avgPerDay;
-  const projectedTet = s.projected;
-
   box.innerHTML = `
     <div class="proj-row">
       <span class="lbl">💰 Đã kiếm được</span>
@@ -793,7 +1052,7 @@ function renderProjection(){
     </div>
     <div class="proj-row">
       <span class="lbl">📊 Trung bình mỗi ngày làm</span>
-      <span class="val">${fmt(avgPerDayWork)}</span>
+      <span class="val">${fmt(s.avgPerDay)}</span>
     </div>
     <div class="proj-row">
       <span class="lbl">⏳ Còn lại đến Tết</span>
@@ -803,51 +1062,44 @@ function renderProjection(){
       <span class="lbl">🛠️ Số ngày làm dự kiến</span>
       <span class="val">≈ ${s.workDaysLeft} ngày</span>
     </div>
-
     <div class="proj-big">
       <div class="plabel">🔮 Dự kiến đến Tết ${tet.name}</div>
-      <div class="pvalue">${fmt(projectedTet)}</div>
-      <div class="psub">Dựa trên mức trung bình ${fmt(avgPerDayWork)}/ngày × ${s.workDaysLeft} ngày làm việc còn lại</div>
+      <div class="pvalue">${fmt(s.projected)}</div>
+      <div class="psub">Dựa trên mức trung bình ${fmt(s.avgPerDay)}/ngày × ${s.workDaysLeft} ngày làm việc còn lại</div>
     </div>
-
     <div class="dpw-row">
       <span>⚙️ Bạn làm mấy ngày / tuần?</span>
       <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
     </div>
   `;
-
   const dpw = $('#dpwInput');
   dpw.addEventListener('input', e => {
     const v = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
     state.daysPerWeek = v;
-    save();
+    queueSave();
     renderVip();
     renderProjection();
   });
 }
 
-/* --- Lịch thu nhập --- */
 function renderCalendar(){
   const [y,m] = calMonth.split('-').map(Number);
-  const firstDay = new Date(y, m-1, 1).getDay(); // 0=CN
-  const startOffset = (firstDay + 6) % 7;         // T2=0
+  const firstDay = new Date(y, m-1, 1).getDay();
+  const startOffset = (firstDay + 6) % 7;
   const daysInMonth = new Date(y, m, 0).getDate();
 
-  // Tổng theo ngày trong tháng
   const dayTotals = {};
   state.dailyIncomes.forEach(e => {
     if(e.date.startsWith(calMonth)) dayTotals[e.date] = (dayTotals[e.date] || 0) + e.amount;
   });
   const maxAmt = Math.max(1, ...Object.values(dayTotals));
 
-  // Label
   const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
                       'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
   $('#calMonthLbl').textContent = `${monthNames[m-1]} ${y}`;
 
   const dow = ['T2','T3','T4','T5','T6','T7','CN'];
   let html = dow.map(d => `<div class="cal-dow">${d}</div>`).join('');
-
   for(let i=0; i<startOffset; i++) html += '<div class="cal-cell empty"></div>';
 
   for(let d=1; d<=daysInMonth; d++){
@@ -866,21 +1118,17 @@ function renderCalendar(){
       ${amt ? `<span class="cal-amt">${formatShort(amt)}</span>` : ''}
     </div>`;
   }
-
   $('#calGrid').innerHTML = html;
 }
 
-/* --- Lịch sử thu nhập --- */
 function renderHistory(){
   const items = [...state.dailyIncomes].sort((a,b) => b.date.localeCompare(a.date) || b.ts - a.ts);
   $('#histCount').textContent = items.length;
-
   const el = $('#histList');
   if(!items.length){
     el.innerHTML = '<div class="empty">Chưa có thu nhập nào được ghi.<br>Nhập ngày đầu tiên ở cột trái nhé 👈</div>';
     return;
   }
-
   el.innerHTML = items.map(e => {
     const sub = [];
     if(e.note) sub.push(esc(e.note));
@@ -898,21 +1146,15 @@ function renderHistory(){
   }).join('');
 }
 
-/* --- Chi tiêu --- */
 function renderExpenses(){
   const mk = currentMonth();
   const items = state.expenses
     .filter(e => e.date.slice(0,7) === mk)
     .sort((a,b) => b.date.localeCompare(a.date) || b.ts - a.ts);
-
   const total = items.reduce((s,e) => s + e.amount, 0);
   $('#expSum').innerHTML = `<span>Tổng chi tháng ${mk.split('-')[1]}/${mk.split('-')[0]}</span><b>${fmt(total)}</b>`;
-
   const el = $('#expList');
-  if(!items.length){
-    el.innerHTML = '';
-    return;
-  }
+  if(!items.length){ el.innerHTML = ''; return; }
   el.innerHTML = items.map(e => `
     <div class="mini-item">
       <span>${esc(e.name)} · ${fmtDate(e.date)}</span>
@@ -922,9 +1164,82 @@ function renderExpenses(){
   `).join('');
 }
 
-/* ==================== CHẠY ==================== */
-updateQuickPreview();
-render();
+/* ==================== KHỞI ĐỘNG ==================== */
+(async function init(){
+  // 1. Mở IndexedDB
+  try { db = await openDB(); } catch(e){ console.warn('IDB không khả dụng', e); }
+
+  // 2. Nạp state: IDB → localStorage → migrate từ key cũ
+  let loaded = false;
+  const idbData = await idbGet('state');
+  if(idbData && (idbData.dailyIncomes?.length || idbData.expenses?.length)){
+    state = { ...defaultState, ...idbData };
+    loaded = true;
+  }
+  if(!loaded){
+    try {
+      const ls = localStorage.getItem(LS_KEY);
+      if(ls){
+        const parsed = JSON.parse(ls);
+        if(parsed.dailyIncomes?.length || parsed.expenses?.length){
+          state = { ...defaultState, ...parsed };
+          loaded = true;
+        }
+      }
+    } catch(e){}
+  }
+  // Migrate từ các key cũ
+  if(!loaded){
+    const MIGRATE_KEYS = ['sochitieu_daily_v1','sochitieu_vip_v1','sochitieu_v2'];
+    for(const k of MIGRATE_KEYS){
+      try {
+        const old = localStorage.getItem(k);
+        if(!old) continue;
+        const parsed = JSON.parse(old);
+        if(!parsed) continue;
+        if(parsed.dailyIncomes) state.dailyIncomes = parsed.dailyIncomes;
+        else if(parsed.incomes) state.dailyIncomes = parsed.incomes.map(i => ({
+          id: i.id || uid(), date: i.date, amount: i.amount || 0,
+          hours: i.hours || 0, note: i.name || '', ts: i.ts || Date.now()
+        }));
+        if(parsed.expenses) state.expenses = parsed.expenses;
+        if(parsed.daysPerWeek) state.daysPerWeek = parsed.daysPerWeek;
+        if(parsed.theme) state.theme = parsed.theme;
+        if(state.dailyIncomes.length || state.expenses.length){ loaded = true; break; }
+      } catch(e){}
+    }
+  }
+
+  // 3. Khôi phục file handle
+  const fh = await idbGet('fileHandle');
+  if(fh){
+    fileHandle = fh;
+    const perm = await checkPermission();
+    if(perm === 'granted') updateBackupUI('active');
+    else if(perm === 'prompt') updateBackupUI('prompt');
+    else { fileHandle = null; updateBackupUI('none'); }
+  } else {
+    updateBackupUI('none');
+  }
+
+  // 4. Áp dụng
+  applyTheme();
+  syncInputs();
+  render();
+  lastSaveTs = Date.now();
+  updateSaveIndicator('saved');
+
+  // 5. Lưu ngay khi mở để đảm bảo dữ liệu đồng bộ cả 3 lớp
+  if(loaded) queueSave();
+
+  // 6. Cảnh báo khi rời trang mà chưa có file backup
+  window.addEventListener('beforeunload', (e) => {
+    if(!fileHandle && (state.dailyIncomes.length || state.expenses.length)){
+      // Ghi đồng bộ vào localStorage lần cuối
+      try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(err){}
+    }
+  });
+})();
 </script>
 </body>
 </html>
