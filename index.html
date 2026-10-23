@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sổ Thu Nhập Ngày – Lưu Vĩnh Viễn Nhiều Năm</title>
+<title>Sổ Thu Nhập Ngày – Lưu Vĩnh Viễn</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -47,7 +47,7 @@
   .brand p{font-size:13px;color:var(--muted);margin-top:3px}
   .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .icon-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);
-            font-size:18px;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
+            font-size:18px;cursor:pointer;transition:.15s;box-shadow:var(--shadow);display:grid;place-items:center}
   .icon-btn:hover{transform:translateY(-1px);border-color:var(--brand)}
   .save-indicator{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;
     background:var(--green-soft);color:var(--green);font-size:12px;font-weight:700;
@@ -213,7 +213,7 @@
   .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
   .cal-nav .month-lbl{font-weight:800;font-size:14px}
   .cal-nav button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);
-                  background:var(--card-2);cursor:pointer;font-size:14px;transition:.15s}
+                  background:var(--card-2);cursor:pointer;font-size:14px;transition:.15s;display:grid;place-items:center}
   .cal-nav button:hover{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
   .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
   .cal-dow{text-align:center;font-size:10.5px;font-weight:700;color:var(--muted);padding:4px 0}
@@ -301,7 +301,7 @@
     </div>
     <div class="actions">
       <div class="save-indicator" id="saveIndicator">
-        <span class="dot"></span><span id="saveText">Đang khởi động…</span>
+        <span class="dot"></span><span id="saveText">Đang tải…</span>
       </div>
       <button class="icon-btn" id="themeBtn" title="Đổi giao diện">🌙</button>
     </div>
@@ -363,16 +363,16 @@
         <form id="dailyForm">
           <div class="two">
             <label class="field">
-              <span     >Ngày</span>
+              <span>Ngày</span>
               <input id="dayDate" type="date">
             </label>
-            <label class="field if">
+            <label class="field">
               <span>Số giờ (tuỳ chọn)</span>
-              <input id="dayHours" type="number" min="0(" step="0.5" placeholder="0">
+              <input id="dayHours" type="number" min="0" step="0.5" placeholder="0">
             </label>
           </div>
           <label class="field">
-            <permspan>Ghi chú (tuỳ chọn)</span>
+            <span>Ghi chú (tuỳ chọn)</span>
             <input id="dayNote" type="text" placeholder="Làm công ty, chạy grab, bán hàng..." autocomplete="off">
           </label>
           <button class="btn primary big" type="submit">+ Lưu thu nhập ngày này</button>
@@ -408,7 +408,6 @@
 
     <div class="col-right">
 
-      <!-- TỔNG TẤT CẢ CÁC NĂM -->
       <section class="card alltime-card" id="alltimeCard">
         <div class="alltime-title">🏆 TỔNG TẤT CẢ CÁC NĂM</div>
         <div class="alltime-value" id="allTimeValue">0 đ</div>
@@ -425,7 +424,7 @@
           <h2>🎯 Tổng từ giờ đến Tết</h2>
           <button class="icon-btn" id="goTodayBtn" title="Nhập hôm nay" style="width:34px;height:34px;font-size:15px">➕</button>
         </div>
- !==        <div id="projContent"></div>
+        <div id="projContent"></div>
       </section>
 
       <section class="card">
@@ -441,10 +440,9 @@
         </p>
       </section>
 
-      <!-- LỊCH SỬ ĐA NĂM -->
       <section class="card">
         <div class="card-head">
-          <h2> '📋 Lịch sử tất cả các năm</h2>
+          <h2>📋 Lịch sử tất cả các năm</h2>
           <span class="badge" id="histCount">0 mục</span>
         </div>
         <div class="hist-filter" id="histFilter"></div>
@@ -490,6 +488,7 @@ function todayISO(){
 }
 const currentMonth = () => todayISO().slice(0,7);
 function fmtDate(iso){
+  if(!iso || !iso.includes('-')) return iso;
   const [y,m,d] = iso.split('-');
   return `${d}/${m}/${y}`;
 }
@@ -524,7 +523,9 @@ function nextTet(){
   for(let y = today.getFullYear(); y <= today.getFullYear() + 12; y++){
     const info = TET_DATES[y];
     if(!info) continue;
-    const d = new Date(info.d + 'T00:00:00');
+    // Sửa lỗi parse ngày trên Safari iOS
+    const [yy, mm, dd] = info.d.split('-').map(Number);
+    const d = new Date(yy, mm-1, dd);
     if(d >= today) return { date:d, key:info.d.slice(0,7), name:info.name, iso:info.d };
   }
   const d = new Date(today.getFullYear()+1, 1, 17);
@@ -539,7 +540,7 @@ function showToast(msg, type='info'){
 }
 
 /* ==================== STATE ==================== */
-const LS_KEY = 'sochitieu_persist_v2';
+const LS_KEY = 'sochitieu_persist_v3'; // Tăng version để tránh xung đột cũ
 const defaultState = {
   dailyIncomes: [], expenses: [], daysPerWeek: 5, theme: 'light',
   lastFileBackup: 0, lastReminderShown: 0, createdAt: Date.now()
@@ -549,10 +550,17 @@ let db = null;
 let fileHandle = null;
 let historyYearFilter = 'all';
 
-/* ==================== INDEXEDDB ==================== */
+/* ==================== INDEXEDDB (Có Timeout chống treo) ==================== */
 const DB_NAME = 'sochitieu_db';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE = 'kv';
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
+  ]);
+}
 
 async function openDB(){
   return new Promise((resolve, reject) => {
@@ -591,7 +599,7 @@ async function idbSet(key, value){
 const hasFileAPI = 'showSaveFilePicker' in window && 'showOpenFilePicker' in window;
 
 async function pickSaveFile(){
-  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ. Dùng Chrome/Edge.', 'error'); return false; }
+  if(!hasFileAPI){ showToast('Trình duyệt (iPhone/Safari) không hỗ trợ lưu file. Hãy dùng nút Tải Backup!', 'error'); return false; }
   try {
     const handle = await window.showSaveFilePicker({
       suggestedName: `so-thu-nhap-${todayISO()}.json`,
@@ -618,12 +626,11 @@ async function writeToFile(force=false){
   try {
     if(!force){
       const perm = await fileHandle.queryPermission({ mode:'readwrite' });
-granted') return false;
+      if(perm !== 'granted') return false;
     }
     const writable = await fileHandle.createWritable();
     await writable.write(JSON.stringify({
-      _meta: { app: 'so-thu-nhap', version: 2, savedAt: new Date().toISOString(),
-                totalEntries: state.dailyIncomes.length + state.expenses.length },
+      _meta: { app: 'so-thu-nhap', version: 3, savedAt: new Date().toISOString() },
       state
     }, null, 2));
     await writable.close();
@@ -636,7 +643,7 @@ granted') return false;
 }
 
 async function pickOpenFile(){
-  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ.', 'error'); return; }
+  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ nhập file. Hãy dùng File Input!', 'error'); return; }
   try {
     const [handle] = await window.showOpenFilePicker({
       types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }],
@@ -644,37 +651,42 @@ async function pickOpenFile(){
     });
     const file = await handle.getFile();
     const text = await file.text();
+    processImportedText(text);
+  } catch(e){
+    if(e.name !== 'AbortError'){ console.error(e); showToast('File không hợp lệ!', 'error'); }
+  }
+}
+
+/* Hàm xử lý nhập chung cho cả FilePicker và Input File */
+function processImportedText(text) {
+  try {
     const parsed = JSON.parse(text);
     const newState = parsed.state || parsed;
     if(!newState || typeof newState !== 'object') throw new Error('invalid');
 
     const curCount = (state.dailyIncomes?.length || 0) + (state.expenses?.length || 0);
     const newCount = (newState.dailyIncomes?.length || 0) + (newState.expenses?.length || 0);
-    const msg = curCount > 0
-      ? `File có ${newCount} mục, hiện tại có ${curCount} mục.\nNhập sẽ GỘP (không ghi đè)? Nhấn Cancel để ghi đè.`
-      : `Nhập ${newCount} mục từ file?`;
-    const merge = confirm(msg);
+    
+    let merge = false;
+    if (curCount > 0) {
+      merge = confirm(`File có ${newCount} mục, hiện tại có ${curCount} mục.\nBấm OK để GỘP dữ liệu.\nBấm Cancel để GHI ĐÈ.`);
+      if (!merge && !confirm('GHI ĐÈ toàn bộ dữ liệu hiện tại?')) return;
+    }
 
     if(merge){
-      // Gộp: giữ tất cả id unique
       const ids = new Set(state.dailyIncomes.map(x => x.id));
       const idsE = new Set(state.expenses.map(x => x.id));
       (newState.dailyIncomes || []).forEach(x => { if(!ids.has(x.id)) state.dailyIncomes.push(x); });
       (newState.expenses || []).forEach(x => { if(!idsE.has(x.id)) state.expenses.push(x); });
     } else {
-      if(!confirm('GHI ĐÈ toàn bộ dữ liệu hiện tại bằng dữ liệu file?')) return;
       state = { ...defaultState, ...newState, theme: state.theme };
     }
-    await persistState();
+    queueSave();
     syncInputs(); applyTheme(); render();
     showToast('✅ Đã nhập dữ liệu từ file!');
-    if(!fileHandle){
-      fileHandle = handle;
-      await idbSet('fileHandle', handle);
-      updateBackupUI('active');
-    }
-  } catch(e){
-    if(e.name !== 'AbortError'){ console.error(e); showToast('File không hợp lệ!', 'error'); }
+  } catch(e) {
+    console.error(e);
+    showToast('File không hợp lệ hoặc bị lỗi!', 'error');
   }
 }
 
@@ -696,8 +708,7 @@ async function requestPermission(){
 
 function downloadBackup(){
   const data = {
-    _meta: { app: 'so-thu-nhap', version: 2, savedAt: new Date().toISOString(),
-              totalEntries: state.dailyIncomes.length + state.expenses.length },
+    _meta: { app: 'so-thu-nhap', version: 3, savedAt: new Date().toISOString() },
     state
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
@@ -785,7 +796,6 @@ async function updateBackupUI(mode){
   const banner = $('#backupBanner');
   if(!banner) return;
 
-  // Kiểm tra nhắc nhở 30 ngày
   const daysSinceBackup = state.lastFileBackup
     ? Math.floor((Date.now() - state.lastFileBackup) / 86400000) : 999;
   const shouldRemind = mode !== 'active' && state.dailyIncomes.length > 0
@@ -795,18 +805,28 @@ async function updateBackupUI(mode){
   if(!hasFileAPI){
     banner.innerHTML = `
       <div class="backup-banner">
-        <div class="banner-icon">⚠️</div>
+        <div class="banner-icon">📱</div>
         <div class="banner-content">
-          <div class="banner-title">Trình duyệt không hỗ trợ lưu file tự động</div>
-          <div class="banner-desc">Dữ liệu chỉ lưu trên trình duyệt này. <b>Hãy tải backup thủ công mỗi tháng</b> để giữ lâu dài. Khuyến nghị dùng <b>Chrome/Edge</b> để lưu vĩnh viễn.</div>
+          <div class="banner-title">Chế độ dành cho Điện thoại / Safari</div>
+          <div class="banner-desc">Trình duyệt này <b>không hỗ trợ tự lưu file</b>. Dữ liệu vẫn được lưu an toàn vào máy. Để không bao giờ mất, hãy <b>tải Backup</b> và cất vào Google Drive / Zalo.</div>
         </div>
         <div class="banner-actions">
-          <button class="banner-btn primary" id="bDownload">📥 Tải backup</button>
-          <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+          <button class="banner-btn primary" id="bDownload">📥 Tải Backup</button>
+          <label class="banner-btn secondary" style="cursor:pointer">
+            📂 Nhập từ File
+            <input type="file" id="bFileInput" accept=".json" hidden>
+          </label>
         </div>
       </div>`;
     $('#bDownload').onclick = downloadBackup;
-    $('#bImport').onclick = pickOpenFile;
+    $('#bFileInput').onchange = (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => processImportedText(ev.target.result);
+      reader.readAsText(file);
+      e.target.value = '';
+    };
     return;
   }
 
@@ -821,12 +841,12 @@ async function updateBackupUI(mode){
         <div class="banner-icon">✅</div>
         <div class="banner-content">
           <div class="banner-title">Đang lưu vĩnh viễn vào file <span class="banner-file">${esc(name)}</span></div>
-          <div class="banner-desc"><b>${total} mục</b> đã được lưu. Không giới hạn số năm — dữ liệu tồn tại mãi trên ổ cứng. Lần lưu cuối: <b>${timeStr}</b>.</div>
+          <div class="banner-desc"><b>${total} mục</b> đã lưu. Lần cuối: <b>${timeStr}</b>.</div>
         </div>
         <div class="banner-actions">
           <button class="banner-btn secondary" id="bSaveNow">💾 Lưu ngay</button>
           <button class="banner-btn secondary" id="bDownload">📥 Tải bản sao</button>
-          <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+          <button class="banner-btn secondary" id="bImport">📂 Nhập file</button>
         </div>
       </div>`;
     $('#bSaveNow').onclick = async () => { await persistState(); showToast('💾 Đã lưu!'); };
@@ -840,8 +860,8 @@ async function updateBackupUI(mode){
       <div class="backup-banner prompt">
         <div class="banner-icon">🔓</div>
         <div class="banner-content">
-          <div class="banner-title">File backup đang tạm dừng</div>
-          <div class="banner-desc">Trình duyệt cần bạn cấp lại quyền ghi vào file (thường sau khi đóng máy lâu). Nhấn nút để tiếp tục lưu tự động.</div>
+          <div class="banner-title">Cần cấp lại quyền lưu file</div>
+          <div class="banner-desc">Trình duyệt cần bạn cấp lại quyền ghi (thường sau khi đóng máy). Nhấn nút để tiếp tục.</div>
         </div>
         <div class="banner-actions">
           <button class="banner-btn primary" id="bGrant">🔓 Bật lại lưu file</button>
@@ -851,7 +871,7 @@ async function updateBackupUI(mode){
       </div>`;
     $('#bGrant').onclick = async () => {
       const ok = await requestPermission();
-      if(ok){ showToast('✅ Đã bật lại lưu file!'); await persistState(); updateBackupUI('active'); }
+      if(ok){ showToast('✅ Đã bật lại!'); await persistState(); updateBackupUI('active'); }
       else showToast('Chưa được cấp quyền.', 'error');
     };
     $('#bDownload').onclick = downloadBackup;
@@ -859,7 +879,6 @@ async function updateBackupUI(mode){
     return;
   }
 
-  // Nhắc nhở khi lâu không backup
   if(shouldRemind){
     state.lastReminderShown = Date.now();
     idbSet('state', state);
@@ -868,11 +887,11 @@ async function updateBackupUI(mode){
         <div class="banner-icon">⏰</div>
         <div class="banner-content">
           <div class="banner-title">Đã ${daysSinceBackup} ngày chưa sao lưu!</div>
-          <div class="banner-desc">Bạn có <b>${state.dailyIncomes.length} mục</b> dữ liệu quý. Hãy tải bản sao ngay và cất vào <b>Google Drive / USB</b> để không bao giờ mất — kể cả khi mất máy.</div>
+          <div class="banner-desc">Bạn có <b>${state.dailyIncomes.length} mục</b>. Hãy tải bản sao ngay để cất vào Google Drive.</div>
         </div>
         <div class="banner-actions">
-          <button class="banner-btn primary" id="bDownload">📥 Tải bản sao ngay</button>
-          <button class="banner-btn secondary" id="bEnable">🔒 Bật lưu vĩnh viễn</button>
+          <button class="banner-btn primary" id="bDownload">📥 Tải ngay</button>
+          <button class="banner-btn secondary" id="bEnable">🔒 Bật lưu file</button>
           <button class="banner-btn secondary" id="bLater">Để sau</button>
         </div>
       </div>`;
@@ -882,18 +901,17 @@ async function updateBackupUI(mode){
     return;
   }
 
-  // mode = 'none'
   banner.innerHTML = `
     <div class="backup-banner">
       <div class="banner-icon">🔒</div>
       <div class="banner-content">
-        <div class="banner-title">Bật lưu vĩnh viễn — không mất dù qua nhiều năm</div>
-        <div class="banner-desc">Hiện dữ liệu chỉ lưu trong trình duyệt. Nếu <b>xoá cache, đổi máy, dùng ẩn danh</b> sẽ mất. Bật lưu file để <b>mọi thay đổi tự động ghi vào 1 file thật trên máy</b> — giữ được hàng chục năm.</div>
+        <div class="banner-title">Bật lưu vĩnh viễn — an toàn nhất</div>
+        <div class="banner-desc">Dữ liệu tự động ghi vào 1 file thật trên máy. Không sợ mất dù xoá cache.</div>
       </div>
       <div class="banner-actions">
-        <button class="banner-btn primary" id="bEnable">🔒 Bật lưu vĩnh viễn</button>
+        <button class="banner-btn primary" id="bEnable">🔒 Bật lưu</button>
         <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
-        <button class="banner-btn secondary" id="bImport">📂 Nhập từ file</button>
+        <button class="banner-btn secondary" id="bImport">📂 Nhập file</button>
       </div>
     </div>`;
   $('#bEnable').onclick = pickSaveFile;
@@ -912,9 +930,7 @@ document.querySelectorAll('[data-quick]').forEach(btn => {
     $('#dayAmount').value = nf.format(cur + parseInt(btn.dataset.quick, 10));
   });
 });
-document.querySelector('[data-clear]').addEventListener('click', () => {
-  $('#dayAmount').value = '';
-});
+document.querySelector('[data-clear]').addEventListener('click', () => { $('#dayAmount').value = ''; });
 $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
 
@@ -931,11 +947,11 @@ $('#dailyForm').addEventListener('submit', e => {
   });
   $('#dayAmount').value = ''; $('#dayHours').value = ''; $('#dayNote').value = '';
   $('#dayDate').value = today; updateQuickPreview();
-  // Nếu năm hiện tại khác filter, chuyển sang năm đó
   if(historyYearFilter !== 'all' && historyYearFilter !== date.slice(0,4)){
     historyYearFilter = date.slice(0,4);
   }
   queueSave(); render();
+  showToast('✅ Đã lưu thu nhập!');
 });
 
 $('#goTodayBtn').addEventListener('click', () => {
@@ -957,10 +973,9 @@ $('#expenseForm').addEventListener('submit', e => {
   queueSave(); render();
 });
 
-// Xoá
 $('#histList').addEventListener('click', e => {
   const btn = e.target.closest('[data-delinc]'); if(!btn) return;
-  if(!confirm('Xoá mục này? Dữ liệu sẽ mất khỏi mọi nơi (IndexedDB + file).')) return;
+  if(!confirm('Xoá mục này?')) return;
   state.dailyIncomes = state.dailyIncomes.filter(x => x.id !== btn.dataset.delinc);
   queueSave(); render();
 });
@@ -970,7 +985,6 @@ $('#expList').addEventListener('click', e => {
   queueSave(); render();
 });
 
-// Calendar
 let calMonth = currentMonth();
 $('#calPrev').addEventListener('click', () => { calMonth = shiftMonth(calMonth, -1); renderCalendar(); });
 $('#calNext').addEventListener('click', () => { calMonth = shiftMonth(calMonth, 1);  renderCalendar(); });
@@ -983,18 +997,16 @@ $('#calGrid').addEventListener('click', e => {
   cell.classList.add('selected');
 });
 
-// History filter
 $('#histFilter').addEventListener('click', e => {
   const chip = e.target.closest('[data-year]'); if(!chip) return;
   historyYearFilter = chip.dataset.year;
   renderHistory();
 });
 
-// Reset
 $('#resetBtn').addEventListener('click', () => {
   const total = state.dailyIncomes.length + state.expenses.length;
-  if(!confirm(`Xoá toàn bộ ${total} mục? Không thể hoàn tác!\n\n(File backup nếu đã tải vẫn còn)`)) return;
-  if(!confirm('CHẮC CHẮN xoá? Nhấn OK để xoá hết.')) return;
+  if(!confirm(`Xoá toàn bộ ${total} mục? Không thể hoàn tác!`)) return;
+  if(!confirm('CHẮC CHẮN xoá?')) return;
   state.dailyIncomes = []; state.expenses = [];
   queueSave(); render();
   showToast('Đã xoá toàn bộ dữ liệu', 'error');
@@ -1098,7 +1110,6 @@ function renderVip(){
   todayEl.className = 'vip-value ' + (s.todayTotal > 0 ? 'pos' : 'dim');
   $('#vipTodaySub').textContent = s.todayTotal > 0 ? 'Đã ghi hôm nay ✓' : 'Chưa nhập hôm nay';
 
-  // Tổng tất cả các năm
   const at = computeAllTime();
   totalEl.textContent = fmt(at.allIncome);
   totalEl.className = 'vip-value pos';
@@ -1235,8 +1246,6 @@ function renderCalendar(){
 
 function renderHistory(){
   const years = getYearsWithData();
-
-  // Filter chips
   const filterEl = $('#histFilter');
   let filterHtml = `<button class="hist-chip ${historyYearFilter==='all'?'active':''}" data-year="all">Tất cả<span class="cnt">${state.dailyIncomes.length}</span></button>`;
   years.forEach(y => {
@@ -1245,16 +1254,13 @@ function renderHistory(){
   });
   filterEl.innerHTML = filterHtml;
 
-  // Lọc theo năm
   let items = [...state.dailyIncomes];
   if(historyYearFilter !== 'all'){
     items = items.filter(e => e.date.startsWith(historyYearFilter));
   }
   items.sort((a,b) => b.date.localeCompare(a.date) || b.ts - a.ts);
-
   $('#histCount').textContent = `${state.dailyIncomes.length} mục`;
 
-  // Summary
   const sumEl = $('#histSummary');
   if(items.length === 0){
     sumEl.innerHTML = `Chưa có thu nhập ${historyYearFilter==='all'?'nào':'trong năm '+historyYearFilter}.`;
@@ -1262,13 +1268,10 @@ function renderHistory(){
     const total = items.reduce((s,e) => s + e.amount, 0);
     const totalDays = new Set(items.map(e => e.date)).size;
     const avg = total / Math.max(1, totalDays);
-    const range = historyYearFilter === 'all'
-      ? `tất cả các năm`
-      : `năm ${historyYearFilter}`;
+    const range = historyYearFilter === 'all' ? `tất cả các năm` : `năm ${historyYearFilter}`;
     sumEl.innerHTML = `📊 ${range}: <b>${fmt(total)}</b> · ${items.length} mục · ${totalDays} ngày · TB <b>${fmt(avg)}</b>/ngày`;
   }
 
-  // Nhóm theo tháng
   const el = $('#histList');
   if(items.length === 0){
     el.innerHTML = '<div class="empty">Chưa có thu nhập nào được ghi.<br>Nhập ngày đầu tiên ở cột trái nhé 👈</div>';
@@ -1283,7 +1286,6 @@ function renderHistory(){
     groups[mk].total += e.amount;
   });
   const sortedMonths = Object.keys(groups).sort((a,b) => b.localeCompare(a));
-
   const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
                       'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
   let html = '';
@@ -1334,32 +1336,42 @@ function renderExpenses(){
   `).join('');
 }
 
-/* ==================== KHỞI ĐỘNG ==================== */
+/* ==================== KHỞI ĐỘNG AN TOÀN ==================== */
 (async function init(){
-  try { db = await openDB(); } catch(e){ console.warn('IDB không khả dụng', e); }
+  // 1. Render UI ngay lập tức (bằng dữ liệu rỗng hoặc localStorage) để không bao giờ bị đơ
+  try {
+    const ls = localStorage.getItem(LS_KEY);
+    if(ls) {
+      const parsed = JSON.parse(ls);
+      state = { ...defaultState, ...parsed };
+    }
+  } catch(e){}
+  
+  applyTheme();
+  syncInputs();
+  render();
 
-  // Nạp state với nhiều nguồn
-  let loaded = false;
-  const idbData = await idbGet('state');
-  if(idbData && (idbData.dailyIncomes?.length || idbData.expenses?.length)){
-    state = { ...defaultState, ...idbData };
-    loaded = true;
+  // 2. Kết nối IndexedDB với Timeout 1.5 giây (chống treo Safari iOS)
+  try {
+    db = await withTimeout(openDB(), 1500);
+  } catch(e) {
+    console.warn('IndexedDB lỗi hoặc quá chậm, bỏ qua.', e);
+    db = null;
   }
-  if(!loaded){
-    try {
-      const ls = localStorage.getItem(LS_KEY);
-      if(ls){
-        const parsed = JSON.parse(ls);
-        if(parsed.dailyIncomes?.length || parsed.expenses?.length){
-          state = { ...defaultState, ...parsed };
-          loaded = true;
-        }
-      }
-    } catch(e){}
+
+  // 3. Đọc dữ liệu từ IDB (nếu có và mới hơn)
+  if(db) {
+    const idbData = await idbGet('state');
+    if(idbData && idbData.dailyIncomes?.length >= state.dailyIncomes?.length) {
+      state = { ...defaultState, ...idbData };
+      applyTheme();
+      render();
+    }
   }
-  // Migrate từ key cũ
-  if(!loaded){
-    const MIGRATE_KEYS = ['sochitieu_daily_v1','sochitieu_vip_v1','sochitieu_v2'];
+
+  // 4. Migrate dữ liệu từ các bản cũ nếu cần
+  if(state.dailyIncomes.length === 0 && state.expenses.length === 0) {
+    const MIGRATE_KEYS = ['sochitieu_persist_v2', 'sochitieu_daily_v1','sochitieu_vip_v1','sochitieu_v2'];
     for(const k of MIGRATE_KEYS){
       try {
         const old = localStorage.getItem(k);
@@ -1374,53 +1386,36 @@ function renderExpenses(){
         if(parsed.expenses) state.expenses = parsed.expenses;
         if(parsed.daysPerWeek) state.daysPerWeek = parsed.daysPerWeek;
         if(parsed.theme) state.theme = parsed.theme;
-        if(state.dailyIncomes.length || state.expenses.length){ loaded = true; break; }
+        if(state.dailyIncomes.length || state.expenses.length) {
+          render();
+          break;
+        }
       } catch(e){}
     }
   }
 
-  // Đảm bảo createdAt được set
-  if(!state.createdAt) state.createdAt = Date.now();
-
-  // Khôi phục file handle
-  const fh = await idbGet('fileHandle');
-  if(fh){
-    fileHandle = fh;
-    const perm = await checkPermission();
-    if(perm === 'granted') updateBackupUI('active');
-    else if(perm === 'prompt') updateBackupUI('prompt');
-    else { fileHandle = null; updateBackupUI('none'); }
+  // 5. Khôi phục File Handle (nếu có)
+  if(db) {
+    const fh = await idbGet('fileHandle');
+    if(fh){
+      fileHandle = fh;
+      const perm = await checkPermission();
+      if(perm === 'granted') updateBackupUI('active');
+      else if(perm === 'prompt') updateBackupUI('prompt');
+      else { fileHandle = null; updateBackupUI('none'); }
+    } else {
+      updateBackupUI('none');
+    }
   } else {
     updateBackupUI('none');
   }
 
-  applyTheme();
-  syncInputs();
-  render();
+  // 6. Đánh dấu đã khởi động xong
   lastSaveTs = Date.now();
   updateSaveIndicator('saved');
 
-  if(loaded) queueSave();
-
-  // Cảnh báo khi rời trang mà chưa có file backup
-  window.addEventListener('beforeunload', (e) => {
-    if(!fileHandle && (state.dailyIncomes.length || state.expenses.length)){
-      try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(err){}
-    }
-  });
-
-  // Kiểm tra dữ liệu quá cũ - hiển thị nhắc nhở
-  if(state.dailyIncomes.length > 0){
-    const oldest = state.dailyIncomes.reduce((min, e) => !min || e.date < min ? e.date : min, null);
-    if(oldest){
-      const ageYears = (new Date() - new Date(oldest + 'T00:00:00')) / (365.25 * 86400000);
-      if(ageYears >= 1 && !fileHandle){
-        setTimeout(() => {
-          showToast(`📚 Bạn có dữ liệu từ ${oldest.slice(0,4)} (đã ${Math.floor(ageYears)} năm). Bật lưu file để giữ mãi!`, 'info');
-        }, 1500);
-      }
-    }
-  }
+  // 7. Lưu lại đề phòng
+  queueSave();
 })();
 </script>
 </body>
