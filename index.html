@@ -84,6 +84,23 @@
   .tet-days em{font-style:normal;font-size:13px;font-weight:700}
   .tet-date{font-size:12px;font-weight:700;margin-top:2px}
 
+  /* BANNER BACKUP */
+  .backup-banner{display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:16px;
+    background:linear-gradient(135deg,#fff8e6,#ffefd0);border:1.5px solid #fcd34d;
+    box-shadow:0 8px 20px -12px #f59e0b;flex-wrap:wrap}
+  .backup-banner.safe{background:linear-gradient(135deg,#e6f7f0,#d1fae5);border-color:#34d399}
+  .backup-banner.prompt{background:linear-gradient(135deg,#eef0ff,#e0e7ff);border-color:#818cf8}
+  .banner-icon{font-size:28px;flex:none}
+  .banner-content{flex:1;min-width:220px}
+  .banner-title{font-size:14.5px;font-weight:800;margin-bottom:3px;color:#800000}
+  .banner-desc{font-size:12.5px;color:#8c1c1c;line-height:1.5}
+  .banner-desc b{color:#5d0000;font-weight:700}
+  .banner-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .banner-btn{border:0;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:800;
+    cursor:pointer;transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+  .banner-btn.primary{background:#0ea472;color:#fff;box-shadow:0 4px 12px -4px #0ea472}
+  .banner-btn.secondary{background:rgba(0,0,0,.08);color:#5d0000}
+
   /* ==================== CARDS ==================== */
   .layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
   .col-left,.col-right{display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -161,6 +178,11 @@
   .proj-big .plabel{font-size:12.5px;font-weight:800;color:#ffd700;margin-bottom:6px}
   .proj-big .pvalue{font-size:30px;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
   .proj-big .psub{font-size:12px;opacity:.9;margin-top:6px;line-height:1.5}
+  .dpw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+           background:var(--card-2);border:1px solid #ffcdd2;border-radius:12px;
+           padding:8px 12px;margin-top:12px;font-size:12.5px}
+  .dpw-row span{color:var(--muted);font-weight:700}
+  .dpw-row input{width:60px;padding:5px 8px;text-align:center;font-weight:900;font-size:16px;color:var(--brand);border:1px solid #ffcdd2;border-radius:8px}
 
   /* List */
   .item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;
@@ -188,14 +210,6 @@
   .celebrate-content h2 { font-size: 28px; color: #b71c1c; margin-bottom: 10px; text-transform: uppercase; text-shadow: 1px 1px 0 #fff; }
   .celebrate-content p { font-size: 16px; color: #800000; font-weight: 700; line-height: 1.6; margin-bottom: 25px; }
   .celebrate-content .btn { padding: 15px 30px; font-size: 18px; }
-
-  /* Audio Prompt Modal */
-  .audio-prompt { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10000;
-                  background: #fff; padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-                  display: none; align-items: center; gap: 15px; border: 2px solid #d32f2f; }
-  .audio-prompt.show { display: flex; animation: slideUp 0.3s ease-out; }
-  @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 30px; opacity: 1; } }
-  .audio-prompt button { background: #d32f2f; color: #fff; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 15px; }
 
   @media (max-width:1000px){
     .layout{grid-template-columns:1fr}
@@ -263,6 +277,7 @@
     </div>
   </header>
 
+  <!-- BANNER BACKUP ĐÃ ĐƯỢC KHÔI PHỤC -->
   <div id="backupBanner"></div>
 
   <section class="vip-row">
@@ -417,13 +432,6 @@
   </div>
 </div>
 
-<!-- PROMPT ÂM THANH -->
-<div class="audio-prompt" id="audioPrompt">
-  <span style="font-size:20px">🔊</span>
-  <span style="font-weight:700;color:#d32f2f">Bật âm thanh pháo hoa?</span>
-  <button id="btnEnableAudio">Bật</button>
-</div>
-
 <script>
 /* ==================== TẾT ==================== */
 const TET_DATES = {
@@ -495,19 +503,22 @@ function nextTet(){
 }
 
 /* ==================== STATE ==================== */
-const LS_KEY = 'sochitieu_tet_v1';
+const LS_KEY = 'sochitieu_tet_v2';
 const defaultState = {
   dailyIncomes: [], expenses: [], paydays: [], 
+  daysPerWeek: 5, // KHÔI PHỤC NGÀY LÀM VIỆC
   theme: 'light',
   lastFileBackup: 0, createdAt: Date.now()
 };
 let state = JSON.parse(JSON.stringify(defaultState));
 let db = null;
+let fileHandle = null;
 let historyYearFilter = 'all';
+const hasFileAPI = 'showSaveFilePicker' in window;
 
 /* ==================== INDEXEDDB ==================== */
 const DB_NAME = 'sochitieu_db';
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 const STORE = 'kv';
 
 function withTimeout(promise, ms) {
@@ -546,6 +557,220 @@ async function idbSet(key, value){
   });
 }
 
+/* ==================== FILE SYSTEM & BACKUP (KHÔI PHỤC) ==================== */
+async function pickSaveFile(){
+  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ. Hãy dùng Tải Backup!', 'error'); return false; }
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: `so-thu-nhap-${todayISO()}.json`,
+      types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }]
+    });
+    fileHandle = handle;
+    await idbSet('fileHandle', handle);
+    const ok = await writeToFile(true);
+    if(ok){
+      showToast('✅ Đã bật lưu vĩnh viễn!');
+      state.lastFileBackup = Date.now();
+      await persistState();
+      updateBackupUI('active');
+    }
+    return ok;
+  } catch(e){
+    if(e.name !== 'AbortError') console.error(e);
+    return false;
+  }
+}
+
+async function writeToFile(force=false){
+  if(!fileHandle) return false;
+  try {
+    if(!force){
+      const perm = await fileHandle.queryPermission({ mode:'readwrite' });
+      if(perm !== 'granted') return false;
+    }
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify({
+      _meta: { app: 'so-thu-nhap', version: 6, savedAt: new Date().toISOString() },
+      state
+    }, null, 2));
+    await writable.close();
+    state.lastFileBackup = Date.now();
+    return true;
+  } catch(e){
+    console.error('File write failed', e);
+    return false;
+  }
+}
+
+async function pickOpenFile(){
+  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ nhập file.', 'error'); return; }
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }],
+      multiple: false
+    });
+    const file = await handle.getFile();
+    const text = await file.text();
+    processImportedText(text);
+  } catch(e){
+    if(e.name !== 'AbortError'){ console.error(e); showToast('File không hợp lệ!', 'error'); }
+  }
+}
+
+async function checkPermission(){
+  if(!fileHandle) return 'none';
+  try {
+    const opts = { mode: 'readwrite' };
+    if(await fileHandle.queryPermission(opts) === 'granted') return 'granted';
+    if(await fileHandle.queryPermission(opts) === 'denied') return 'denied';
+    return 'prompt';
+  } catch(e){ return 'none'; }
+}
+async function requestPermission(){
+  if(!fileHandle) return false;
+  try {
+    return (await fileHandle.requestPermission({ mode: 'readwrite' })) === 'granted';
+  } catch(e){ return false; }
+}
+
+function downloadBackup(){
+  const data = {
+    _meta: { app: 'so-thu-nhap', version: 6, savedAt: new Date().toISOString() },
+    state
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `so-thu-nhap-${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  state.lastFileBackup = Date.now();
+  persistState();
+  showToast('📥 Đã tải file backup - cất vào Files/Zalo!');
+}
+
+function processImportedText(text) {
+  try {
+    const parsed = JSON.parse(text);
+    const newState = parsed.state || parsed;
+    if(!newState || typeof newState !== 'object') throw new Error('invalid');
+
+    const curCount = (state.dailyIncomes?.length || 0) + (state.expenses?.length || 0);
+    const newCount = (newState.dailyIncomes?.length || 0) + (newState.expenses?.length || 0);
+    
+    let merge = false;
+    if (curCount > 0) {
+      merge = confirm(`File có ${newCount} mục, hiện tại có ${curCount} mục.\nBấm OK để GỘP dữ liệu.\nBấm Cancel để GHI ĐÈ.`);
+      if (!merge && !confirm('GHI ĐÈ toàn bộ dữ liệu hiện tại?')) return;
+    }
+
+    if(merge){
+      const ids = new Set(state.dailyIncomes.map(x => x.id));
+      const idsE = new Set(state.expenses.map(x => x.id));
+      const idsP = new Set(state.paydays.map(x => x.id));
+      (newState.dailyIncomes || []).forEach(x => { if(!ids.has(x.id)) state.dailyIncomes.push(x); });
+      (newState.expenses || []).forEach(x => { if(!idsE.has(x.id)) state.expenses.push(x); });
+      (newState.paydays || []).forEach(x => { if(!idsP.has(x.id)) state.paydays.push(x); });
+    } else {
+      state = { ...defaultState, ...newState, theme: state.theme };
+    }
+    queueSave();
+    syncInputs(); render();
+    showToast('✅ Đã nhập dữ liệu từ file!');
+  } catch(e) {
+    console.error(e);
+    showToast('File không hợp lệ!', 'error');
+  }
+}
+
+async function updateBackupUI(mode){
+  const banner = $('#backupBanner');
+  if(!banner) return;
+
+  if(!hasFileAPI){
+    banner.innerHTML = `
+      <div class="backup-banner">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-content">
+          <div class="banner-title">Lưu ý cho iPhone / Safari</div>
+          <div class="banner-desc">Safari sẽ <b>tự động xoá dữ liệu</b> sau vài ngày. Hãy bấm <b>Tải Backup</b> sau khi nhập để lưu file an toàn!</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" id="bDownload">📥 Tải Backup</button>
+          <label class="banner-btn secondary" style="cursor:pointer">
+            📂 Nhập File
+            <input type="file" id="bFileInput" accept=".json" hidden>
+          </label>
+        </div>
+      </div>`;
+    $('#bDownload').onclick = downloadBackup;
+    $('#bFileInput').onchange = (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => processImportedText(ev.target.result);
+      reader.readAsText(file);
+      e.target.value = '';
+    };
+    return;
+  }
+
+  if(mode === 'active'){
+    banner.innerHTML = `
+      <div class="backup-banner safe">
+        <div class="banner-icon">✅</div>
+        <div class="banner-content">
+          <div class="banner-title">Đang lưu vĩnh viễn vào file máy tính</div>
+          <div class="banner-desc">Dữ liệu tự động đồng bộ ra file. Không bao giờ mất.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn secondary" id="bSaveNow">💾 Lưu ngay</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải bản sao</button>
+        </div>
+      </div>`;
+    $('#bSaveNow').onclick = async () => { await persistState(); showToast('💾 Đã lưu!'); };
+    $('#bDownload').onclick = downloadBackup;
+    return;
+  }
+
+  if(mode === 'prompt'){
+    banner.innerHTML = `
+      <div class="backup-banner prompt">
+        <div class="banner-icon">🔓</div>
+        <div class="banner-content">
+          <div class="banner-title">Cần cấp lại quyền lưu file</div>
+          <div class="banner-desc">Trình duyệt cần bạn cấp lại quyền ghi.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" id="bGrant">🔓 Bật lại</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
+        </div>
+      </div>`;
+    $('#bGrant').onclick = async () => {
+      const ok = await requestPermission();
+      if(ok){ showToast('✅ Đã bật lại!'); await persistState(); updateBackupUI('active'); }
+    };
+    $('#bDownload').onclick = downloadBackup;
+    return;
+  }
+
+  banner.innerHTML = `
+    <div class="backup-banner">
+      <div class="banner-icon">🔒</div>
+      <div class="banner-content">
+        <div class="banner-title">Bật lưu vĩnh viễn — an toàn nhất</div>
+        <div class="banner-desc">Dữ liệu tự động ghi vào 1 file trên máy tính.</div>
+      </div>
+      <div class="banner-actions">
+        <button class="banner-btn primary" id="bEnable">🔒 Bật lưu</button>
+        <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
+      </div>
+    </div>`;
+  $('#bEnable').onclick = pickSaveFile;
+  $('#bDownload').onclick = downloadBackup;
+}
+
 /* ==================== SAVE ENGINE ==================== */
 let lastSaveTs = 0;
 function updateSaveIndicator(status='saved'){
@@ -557,12 +782,22 @@ async function persistState(){
   const snapshot = JSON.parse(JSON.stringify(state));
   try { localStorage.setItem(LS_KEY, JSON.stringify(snapshot)); } catch(e){}
   await idbSet('state', snapshot);
+  if(fileHandle) await writeToFile();
   lastSaveTs = Date.now();
   updateSaveIndicator('saved');
+  updateBackupUI(fileHandle ? 'active' : 'none');
 }
 async function queueSave(){
   updateSaveIndicator('saving');
   await persistState();
+}
+
+function showToast(msg, type='info'){
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${type==='error'?'#d32f2f':'#0ea472'};color:#fff;padding:12px 24px;border-radius:30px;font-weight:bold;z-index:99999;box-shadow:0 10px 20px rgba(0,0,0,0.5);font-size:14px;white-space:nowrap;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
 /* ==================== INIT ==================== */
@@ -598,7 +833,6 @@ document.querySelector('[data-clear]').addEventListener('click', () => { $('#day
 $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
 
-// Thêm ngày nhận lương
 $('#paydayForm').addEventListener('submit', e => {
   e.preventDefault();
   const date = $('#paydayDate').value;
@@ -611,7 +845,7 @@ $('#paydayForm').addEventListener('submit', e => {
   
   $('#paydayNote').value = '';
   queueSave(); renderPaydays(); renderCalendar(); checkPayDay();
-  alert('Đã lưu ngày nhận lương!');
+  showToast('Đã lưu ngày nhận lương!');
 });
 
 $('#paydayList').addEventListener('click', e => {
@@ -620,7 +854,6 @@ $('#paydayList').addEventListener('click', e => {
   queueSave(); renderPaydays(); renderCalendar();
 });
 
-// Nhập thu nhập
 $('#dailyForm').addEventListener('submit', e => {
   e.preventDefault();
   const amount = parseMoney($('#dayAmount').value);
@@ -632,7 +865,6 @@ $('#dailyForm').addEventListener('submit', e => {
   queueSave(); render();
 });
 
-// Chi tiêu
 $('#expenseForm').addEventListener('submit', e => {
   e.preventDefault();
   const amount = parseMoney($('#expAmount').value);
@@ -705,9 +937,9 @@ function computeStats(){
   const tet = nextTet();
   const now = new Date(); now.setHours(0,0,0,0);
   const daysUntilTet = Math.max(0, daysBetween(now, tet.date));
-  const workDaysLeft = Math.round((daysUntilTet / 7) * 5); // Mặc định 5 ngày/tuần
+  const workDaysLeft = Math.round((daysUntilTet / 7) * state.daysPerWeek); // SỬ DỤNG NGÀY LÀM VIỆC ĐÃ LƯU
   const projected = total + avgPerDay * workDaysLeft;
-  return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak, projected, daysUntilTet };
+  return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak, projected, daysUntilTet, workLeft: workDaysLeft };
 }
 
 function render(){
@@ -760,9 +992,21 @@ function renderProjection(){
     <div class="proj-big">
       <div class="plabel">🔮 Dự kiến đến Tết</div>
       <div class="pvalue">${fmt(s.projected)}</div>
-      <div class="psub">Dựa trên ${fmt(s.avgPerDay)}/ngày</div>
+      <div class="psub">Dựa trên ${fmt(s.avgPerDay)}/ngày × ${s.workLeft} ngày làm việc</div>
+    </div>
+    <div class="dpw-row">
+      <span>⚙️ Bạn làm mấy ngày / tuần?</span>
+      <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
     </div>
   `;
+  
+  // BẮT SỰ KIỆN THAY ĐỔI SỐ NGÀY LÀM VIỆC
+  $('#dpwInput').addEventListener('input', e => {
+    state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
+    queueSave();
+    renderVip();
+    renderProjection();
+  });
 }
 
 function renderCalendar(){
@@ -787,7 +1031,6 @@ function renderCalendar(){
     const amt = dayTotals[dateStr] || 0;
     const isToday = dateStr === todayISO();
     
-    // Kiểm tra ngày nhận lương
     let isPayday = false;
     state.paydays.forEach(p => {
       if(p.repeat === 'monthly' && p.dayOfMonth === d) isPayday = true;
@@ -900,56 +1143,39 @@ resizeCanvas();
 function playBoomSound() {
   if(!audioCtx) return;
   try {
-    const bufferSize = audioCtx.sampleRate * 0.5; // 0.5s
+    const bufferSize = audioCtx.sampleRate * 0.5;
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1; // White noise
-    }
+    for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
     const noise = audioCtx.createBufferSource();
     noise.buffer = buffer;
-    
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
     filter.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-    
     const gain = audioCtx.createGain();
     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-    
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioCtx.destination);
+    noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
     noise.start();
-  } catch(e) { console.log('Audio err', e); }
+  } catch(e) {}
 }
 
 class Particle {
   constructor(x, y, color, speed) {
-    this.x = x; this.y = y;
-    this.color = color;
+    this.x = x; this.y = y; this.color = color;
     const angle = Math.random() * Math.PI * 2;
     const velocity = Math.random() * speed + 2;
     this.vx = Math.cos(angle) * velocity;
     this.vy = Math.sin(angle) * velocity;
-    this.life = 1;
-    this.decay = Math.random() * 0.015 + 0.01;
-    this.gravity = 0.05;
+    this.life = 1; this.decay = Math.random() * 0.015 + 0.01; this.gravity = 0.05;
     this.size = Math.random() * 2 + 1;
   }
-  update() {
-    this.vy += this.gravity;
-    this.x += this.vx;
-    this.y += this.vy;
-    this.life -= this.decay;
-  }
+  update() { this.vy += this.gravity; this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
   draw() {
     ctx.globalAlpha = Math.max(0, this.life);
     ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
   }
 }
 
@@ -959,24 +1185,15 @@ function spawnFirework() {
   const colors = ['#ffd700', '#ff0000', '#ff69b4', '#00ffff', '#ff4500', '#fff'];
   const color = colors[Math.floor(Math.random() * colors.length)];
   const particleCount = 80 + Math.random() * 50;
-  
   playBoomSound();
-  
-  for(let i = 0; i < particleCount; i++) {
-    particles.push(new Particle(x, y, color, 6));
-  }
-  
-  // Tạo hiệu ứng lóe sáng
+  for(let i = 0; i < particleCount; i++) { particles.push(new Particle(x, y, color, 6)); }
   particles.push({
-    x, y, vx:0, vy:0, life: 1, decay: 0.05, gravity: 0, size: 50,
-    color: color,
+    x, y, vx:0, vy:0, life: 1, decay: 0.05, gravity: 0, size: 50, color: color,
     draw: function() {
       ctx.globalAlpha = this.life * 0.5;
       const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-      gradient.addColorStop(0, this.color);
-      gradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = gradient;
-      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+      gradient.addColorStop(0, this.color); gradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
     },
     update: function() { this.life -= this.decay; this.size += 2; }
   });
@@ -993,35 +1210,23 @@ function animateFireworks() {
 function startFireworks() {
   canvas.style.display = 'block';
   if(!animationFrameId) animateFireworks();
-  
-  // Bắn liên tục trong 10 phút (600,000 ms)
   fireworksInterval = setInterval(spawnFirework, 300);
-  spawnFirework(); // Bắn ngay phát đầu tiên
-  
-  fireworksTimeout = setTimeout(() => {
-    stopFireworks();
-  }, 600000); // 10 phút
+  spawnFirework();
+  fireworksTimeout = setTimeout(stopFireworks, 600000); // 10 phút
 }
 
 function stopFireworks() {
-  clearInterval(fireworksInterval);
-  clearTimeout(fireworksTimeout);
+  clearInterval(fireworksInterval); clearTimeout(fireworksTimeout);
   setTimeout(() => {
     canvas.style.display = 'none';
     if(animationFrameId) cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
-    particles = [];
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }, 3000); // Đợi 3s cho tàn pháo hoa
+    animationFrameId = null; particles = []; ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }, 3000);
 }
 
-// Modal logic
 document.getElementById('btnStartFireworks').addEventListener('click', () => {
-  if(!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if(audioCtx.state === 'suspended') audioCtx.resume();
-  
   document.getElementById('celebrateModal').classList.remove('show');
   startFireworks();
 });
@@ -1030,7 +1235,6 @@ document.getElementById('btnCloseModal').addEventListener('click', () => {
   document.getElementById('celebrateModal').classList.remove('show');
 });
 
-// Kiểm tra ngày nhận lương
 let hasCelebrated = false;
 function checkPayDay() {
   if(hasCelebrated) return;
@@ -1040,19 +1244,16 @@ function checkPayDay() {
     if(p.date === t) isToday = true;
     if(p.repeat === 'monthly' && p.dayOfMonth === new Date().getDate()) isToday = true;
   });
-  
   if(isToday) {
     hasCelebrated = true;
     document.getElementById('celebrateModal').classList.add('show');
   }
 }
 
-// Hoa mai rơi
 setInterval(() => {
   if(document.hidden) return;
   const b = document.createElement('div');
-  b.className = 'blossom';
-  b.textContent = '🌸';
+  b.className = 'blossom'; b.textContent = '🌸';
   b.style.left = Math.random() * 100 + 'vw';
   b.style.animationDuration = (Math.random() * 3 + 4) + 's';
   document.body.appendChild(b);
@@ -1073,10 +1274,22 @@ setInterval(() => {
       state = { ...defaultState, ...idbData };
     }
   }
+  
+  if(db) {
+    const fh = await idbGet('fileHandle');
+    if(fh){
+      fileHandle = fh;
+      const perm = await checkPermission();
+      if(perm === 'granted') updateBackupUI('active');
+      else if(perm === 'prompt') updateBackupUI('prompt');
+      else { fileHandle = null; updateBackupUI('none'); }
+    } else updateBackupUI('none');
+  } else {
+    updateBackupUI('none');
+  }
 
   syncInputs(); render(); updateSaveIndicator('saved');
   
-  // Delay check payday một chút để UI render xong
   setTimeout(checkPayDay, 1000);
 })();
 </script>
