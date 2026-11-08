@@ -305,16 +305,12 @@
   <main class="layout">
     <div class="col-left">
       
-      <!-- MỤC TIÊU 💵 MỚI THÊM VÀO ĐÂY -->
+      <!-- MỤC TIÊU 💵 TỰ ĐỘNG LẤY SỐ ĐÃ KIẾM -->
       <section class="card">
         <div class="card-head"><h2>🎯 Mục tiêu 💵</h2></div>
         <label class="field">
           <span>Mục tiêu mình muốn kiếm</span>
           <div class="money"><input id="goalAmount" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
-        </label>
-        <label class="field">
-          <span>Số tiền đã có / đã hoàn thành</span>
-          <div class="money"><input id="goalSaved" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
         </label>
         
         <div id="goalResult" style="margin-top:10px; padding:14px; background:var(--brand-soft); border-radius:12px; border:1px solid #ffcdd2; line-height:1.6;">
@@ -518,12 +514,11 @@ function nextTet(){
 }
 
 /* ==================== STATE ==================== */
-const LS_KEY = 'sochitieu_tet_v3';
+const LS_KEY = 'sochitieu_tet_v4';
 const defaultState = {
   dailyIncomes: [], expenses: [], paydays: [], 
   daysPerWeek: 5,
-  goalAmount: 0, // THÊM MỤC TIÊU
-  goalSaved: 0,  // THÊM TIỀN ĐÃ CÓ
+  goalAmount: 0, // CHỈ CẦN MỤC TIÊU, SỐ ĐÃ CÓ TỰ ĐỘNG TÍNH
   theme: 'light',
   lastFileBackup: 0, createdAt: Date.now()
 };
@@ -535,7 +530,7 @@ const hasFileAPI = 'showSaveFilePicker' in window;
 
 /* ==================== INDEXEDDB ==================== */
 const DB_NAME = 'sochitieu_db';
-const DB_VERSION = 7;
+const DB_VERSION = 8;
 const STORE = 'kv';
 
 function withTimeout(promise, ms) {
@@ -607,7 +602,7 @@ async function writeToFile(force=false){
     }
     const writable = await fileHandle.createWritable();
     await writable.write(JSON.stringify({
-      _meta: { app: 'so-thu-nhap', version: 7, savedAt: new Date().toISOString() },
+      _meta: { app: 'so-thu-nhap', version: 8, savedAt: new Date().toISOString() },
       state
     }, null, 2));
     await writable.close();
@@ -652,7 +647,7 @@ async function requestPermission(){
 
 function downloadBackup(){
   const data = {
-    _meta: { app: 'so-thu-nhap', version: 7, savedAt: new Date().toISOString() },
+    _meta: { app: 'so-thu-nhap', version: 8, savedAt: new Date().toISOString() },
     state
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
@@ -823,7 +818,6 @@ $('#paydayDate').value = today;
 attachMoney($('#dayAmount'));
 attachMoney($('#expAmount'));
 attachMoney($('#goalAmount')); // GẮN FORMAT TIỀN CHO MỤC TIÊU
-attachMoney($('#goalSaved'));  // GẮN FORMAT TIỀN CHO ĐÃ CÓ
 
 function syncInputs(){
   $('#dayDate').value = today;
@@ -831,7 +825,6 @@ function syncInputs(){
   updateQuickPreview();
   // LOAD LẠI MỤC TIÊU
   $('#goalAmount').value = state.goalAmount ? nf.format(state.goalAmount) : '';
-  $('#goalSaved').value = state.goalSaved ? nf.format(state.goalSaved) : '';
 }
 function updateQuickPreview(){
   const d = $('#dayDate').value;
@@ -853,14 +846,9 @@ document.querySelector('[data-clear]').addEventListener('click', () => { $('#day
 $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
 
-// SỰ KIỆN MỤC TIÊU
+// SỰ KIỆN MỤC TIÊU (chỉ nhập mục tiêu)
 $('#goalAmount').addEventListener('input', e => {
   state.goalAmount = parseMoney(e.target.value);
-  queueSave();
-  renderGoal();
-});
-$('#goalSaved').addEventListener('input', e => {
-  state.goalSaved = parseMoney(e.target.value);
   queueSave();
   renderGoal();
 });
@@ -930,7 +918,7 @@ $('#histFilter').addEventListener('click', e => {
 
 $('#resetBtn').addEventListener('click', () => {
   if(!confirm('Xoá toàn bộ dữ liệu?')) return;
-  state.dailyIncomes = []; state.expenses = []; state.paydays = []; state.goalAmount = 0; state.goalSaved = 0;
+  state.dailyIncomes = []; state.expenses = []; state.paydays = []; state.goalAmount = 0;
   syncInputs(); queueSave(); render(); renderPaydays(); renderCalendar();
 });
 
@@ -1012,7 +1000,10 @@ function renderVip(){
 
 function renderGoal() {
   const goal = state.goalAmount;
-  const saved = state.goalSaved;
+  const at = computeAllTime();
+  // TỰ ĐỘNG LẤY TỔNG THU NHẬP LÀM SỐ TIỀN ĐÃ CÓ
+  const saved = at.allIncome; 
+  
   const box = $('#goalResult');
   
   if(goal <= 0) {
@@ -1028,7 +1019,6 @@ function renderGoal() {
   const remaining = goal - saved;
   const pct = Math.min(100, (saved / goal) * 100);
   
-  // Lấy trung bình thu nhập mỗi ngày
   const s = computeStats();
   let daysNeededStr = '—';
   if(!s.empty && s.avgPerDay > 0) {
@@ -1043,6 +1033,10 @@ function renderGoal() {
     </div>
     <div style="height:8px; background:#fff; border-radius:99px; overflow:hidden; margin-bottom:10px; border:1px solid #ffcdd2;">
       <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,#d32f2f,#ff8f00); border-radius:99px; transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:13px; display:flex; justify-content:space-between; margin-bottom:4px;">
+      <span style="color:var(--muted)">Đã có (tự động tính):</span>
+      <b style="color:var(--green)">${fmt(saved)}</b>
     </div>
     <div style="font-size:13px; display:flex; justify-content:space-between; margin-bottom:4px;">
       <span style="color:var(--muted)">Còn thiếu:</span>
