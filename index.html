@@ -277,7 +277,6 @@
     </div>
   </header>
 
-  <!-- BANNER BACKUP ĐÃ ĐƯỢC KHÔI PHỤC -->
   <div id="backupBanner"></div>
 
   <section class="vip-row">
@@ -306,7 +305,23 @@
   <main class="layout">
     <div class="col-left">
       
-      <!-- THÊM NGÀY NHẬN LƯƠNG -->
+      <!-- MỤC TIÊU 💵 MỚI THÊM VÀO ĐÂY -->
+      <section class="card">
+        <div class="card-head"><h2>🎯 Mục tiêu 💵</h2></div>
+        <label class="field">
+          <span>Mục tiêu mình muốn kiếm</span>
+          <div class="money"><input id="goalAmount" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
+        </label>
+        <label class="field">
+          <span>Số tiền đã có / đã hoàn thành</span>
+          <div class="money"><input id="goalSaved" type="text" inputmode="numeric" placeholder="0" autocomplete="off"><i>đ</i></div>
+        </label>
+        
+        <div id="goalResult" style="margin-top:10px; padding:14px; background:var(--brand-soft); border-radius:12px; border:1px solid #ffcdd2; line-height:1.6;">
+          <div style="font-size:13.5px; font-weight:700; color:var(--brand); text-align:center;">Vui lòng nhập mục tiêu để tính toán...</div>
+        </div>
+      </section>
+
       <section class="card">
         <div class="card-head"><h2>🧨 Ngày Nhận Lương</h2></div>
         <form id="paydayForm">
@@ -503,10 +518,12 @@ function nextTet(){
 }
 
 /* ==================== STATE ==================== */
-const LS_KEY = 'sochitieu_tet_v2';
+const LS_KEY = 'sochitieu_tet_v3';
 const defaultState = {
   dailyIncomes: [], expenses: [], paydays: [], 
-  daysPerWeek: 5, // KHÔI PHỤC NGÀY LÀM VIỆC
+  daysPerWeek: 5,
+  goalAmount: 0, // THÊM MỤC TIÊU
+  goalSaved: 0,  // THÊM TIỀN ĐÃ CÓ
   theme: 'light',
   lastFileBackup: 0, createdAt: Date.now()
 };
@@ -518,7 +535,7 @@ const hasFileAPI = 'showSaveFilePicker' in window;
 
 /* ==================== INDEXEDDB ==================== */
 const DB_NAME = 'sochitieu_db';
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 const STORE = 'kv';
 
 function withTimeout(promise, ms) {
@@ -557,7 +574,7 @@ async function idbSet(key, value){
   });
 }
 
-/* ==================== FILE SYSTEM & BACKUP (KHÔI PHỤC) ==================== */
+/* ==================== FILE SYSTEM & BACKUP ==================== */
 async function pickSaveFile(){
   if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ. Hãy dùng Tải Backup!', 'error'); return false; }
   try {
@@ -590,7 +607,7 @@ async function writeToFile(force=false){
     }
     const writable = await fileHandle.createWritable();
     await writable.write(JSON.stringify({
-      _meta: { app: 'so-thu-nhap', version: 6, savedAt: new Date().toISOString() },
+      _meta: { app: 'so-thu-nhap', version: 7, savedAt: new Date().toISOString() },
       state
     }, null, 2));
     await writable.close();
@@ -635,7 +652,7 @@ async function requestPermission(){
 
 function downloadBackup(){
   const data = {
-    _meta: { app: 'so-thu-nhap', version: 6, savedAt: new Date().toISOString() },
+    _meta: { app: 'so-thu-nhap', version: 7, savedAt: new Date().toISOString() },
     state
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
@@ -675,8 +692,7 @@ function processImportedText(text) {
     } else {
       state = { ...defaultState, ...newState, theme: state.theme };
     }
-    queueSave();
-    syncInputs(); render();
+    queueSave(); syncInputs(); render();
     showToast('✅ Đã nhập dữ liệu từ file!');
   } catch(e) {
     console.error(e);
@@ -791,7 +807,6 @@ async function queueSave(){
   updateSaveIndicator('saving');
   await persistState();
 }
-
 function showToast(msg, type='info'){
   const t = document.createElement('div');
   t.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${type==='error'?'#d32f2f':'#0ea472'};color:#fff;padding:12px 24px;border-radius:30px;font-weight:bold;z-index:99999;box-shadow:0 10px 20px rgba(0,0,0,0.5);font-size:14px;white-space:nowrap;`;
@@ -807,11 +822,16 @@ $('#expDate').value = today;
 $('#paydayDate').value = today;
 attachMoney($('#dayAmount'));
 attachMoney($('#expAmount'));
+attachMoney($('#goalAmount')); // GẮN FORMAT TIỀN CHO MỤC TIÊU
+attachMoney($('#goalSaved'));  // GẮN FORMAT TIỀN CHO ĐÃ CÓ
 
 function syncInputs(){
   $('#dayDate').value = today;
   $('#expDate').value = today;
   updateQuickPreview();
+  // LOAD LẠI MỤC TIÊU
+  $('#goalAmount').value = state.goalAmount ? nf.format(state.goalAmount) : '';
+  $('#goalSaved').value = state.goalSaved ? nf.format(state.goalSaved) : '';
 }
 function updateQuickPreview(){
   const d = $('#dayDate').value;
@@ -832,6 +852,18 @@ document.querySelectorAll('[data-quick]').forEach(btn => {
 document.querySelector('[data-clear]').addEventListener('click', () => { $('#dayAmount').value = ''; });
 $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
+
+// SỰ KIỆN MỤC TIÊU
+$('#goalAmount').addEventListener('input', e => {
+  state.goalAmount = parseMoney(e.target.value);
+  queueSave();
+  renderGoal();
+});
+$('#goalSaved').addEventListener('input', e => {
+  state.goalSaved = parseMoney(e.target.value);
+  queueSave();
+  renderGoal();
+});
 
 $('#paydayForm').addEventListener('submit', e => {
   e.preventDefault();
@@ -898,8 +930,8 @@ $('#histFilter').addEventListener('click', e => {
 
 $('#resetBtn').addEventListener('click', () => {
   if(!confirm('Xoá toàn bộ dữ liệu?')) return;
-  state.dailyIncomes = []; state.expenses = []; state.paydays = [];
-  queueSave(); render(); renderPaydays(); renderCalendar();
+  state.dailyIncomes = []; state.expenses = []; state.paydays = []; state.goalAmount = 0; state.goalSaved = 0;
+  syncInputs(); queueSave(); render(); renderPaydays(); renderCalendar();
 });
 
 /* ==================== TÍNH TOÁN & RENDER ==================== */
@@ -937,13 +969,13 @@ function computeStats(){
   const tet = nextTet();
   const now = new Date(); now.setHours(0,0,0,0);
   const daysUntilTet = Math.max(0, daysBetween(now, tet.date));
-  const workDaysLeft = Math.round((daysUntilTet / 7) * state.daysPerWeek); // SỬ DỤNG NGÀY LÀM VIỆC ĐÃ LƯU
+  const workDaysLeft = Math.round((daysUntilTet / 7) * state.daysPerWeek);
   const projected = total + avgPerDay * workDaysLeft;
   return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak, projected, daysUntilTet, workLeft: workDaysLeft };
 }
 
 function render(){
-  renderTet(); renderVip(); renderProjection(); renderCalendar(); renderHistory(); renderExpenses(); renderPaydays();
+  renderTet(); renderVip(); renderProjection(); renderCalendar(); renderHistory(); renderExpenses(); renderPaydays(); renderGoal();
 }
 
 function renderTet(){
@@ -978,6 +1010,52 @@ function renderVip(){
   $('#vipForecastSub').textContent = `Còn ${s.daysUntilTet} ngày đến Tết`;
 }
 
+function renderGoal() {
+  const goal = state.goalAmount;
+  const saved = state.goalSaved;
+  const box = $('#goalResult');
+  
+  if(goal <= 0) {
+    box.innerHTML = `<div style="font-size:13.5px; font-weight:700; color:var(--brand); text-align:center;">Vui lòng nhập mục tiêu để tính toán...</div>`;
+    return;
+  }
+  
+  if(saved >= goal) {
+    box.innerHTML = `<div style="font-size:15px; font-weight:900; color:var(--green); text-align:center;">🎉 CHÚC MỪNG! BẠN ĐÃ ĐẠT MỤC TIÊU! 🎉</div>`;
+    return;
+  }
+  
+  const remaining = goal - saved;
+  const pct = Math.min(100, (saved / goal) * 100);
+  
+  // Lấy trung bình thu nhập mỗi ngày
+  const s = computeStats();
+  let daysNeededStr = '—';
+  if(!s.empty && s.avgPerDay > 0) {
+    const daysNeeded = Math.ceil(remaining / s.avgPerDay);
+    daysNeededStr = `${daysNeeded} ngày`;
+  }
+  
+  box.innerHTML = `
+    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; font-weight:700;">
+      <span style="color:var(--muted)">Tiến độ</span>
+      <span style="color:var(--brand)">${pct.toFixed(1)}%</span>
+    </div>
+    <div style="height:8px; background:#fff; border-radius:99px; overflow:hidden; margin-bottom:10px; border:1px solid #ffcdd2;">
+      <div style="height:100%; width:${pct}%; background:linear-gradient(90deg,#d32f2f,#ff8f00); border-radius:99px; transition:width 0.5s;"></div>
+    </div>
+    <div style="font-size:13px; display:flex; justify-content:space-between; margin-bottom:4px;">
+      <span style="color:var(--muted)">Còn thiếu:</span>
+      <b style="color:var(--red)">${fmt(remaining)}</b>
+    </div>
+    <div style="font-size:13px; display:flex; justify-content:space-between;">
+      <span style="color:var(--muted)">Dự kiến số ngày làm:</span>
+      <b style="color:var(--brand)">${daysNeededStr}</b>
+    </div>
+    ${s.empty || s.avgPerDay <= 0 ? `<div style="font-size:11px; color:var(--muted); margin-top:4px; text-align:center;">(Cần nhập thu nhập để tính số ngày)</div>` : ''}
+  `;
+}
+
 function renderProjection(){
   const s = computeStats();
   const box = $('#projContent');
@@ -999,8 +1077,6 @@ function renderProjection(){
       <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
     </div>
   `;
-  
-  // BẮT SỰ KIỆN THAY ĐỔI SỐ NGÀY LÀM VIỆC
   $('#dpwInput').addEventListener('input', e => {
     state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
     queueSave();
