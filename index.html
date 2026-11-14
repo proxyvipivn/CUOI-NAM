@@ -71,10 +71,10 @@
   .banner-btn.primary{background:#0ea472;color:#fff;}
   .banner-btn.secondary{background:rgba(0,0,0,.08);color:#5d0000}
 
-  /* TABS */
-  .tabs-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; margin-bottom: 8px; }
+  /* TABS (ĐÃ SỬA LỖI TRÀN MÀN HÌNH) */
+  .tabs-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; margin-bottom: 8px; }
   .tabs-container::-webkit-scrollbar { display: none; }
-  .tab-btn { flex: 1; min-width: 110px; padding: 12px 16px; border-radius: 12px; border: 2px solid transparent; background: rgba(255,255,255,0.15); color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; white-space: nowrap; text-align: center; backdrop-filter: blur(5px); }
+  .tab-btn { flex: 1; padding: 12px 4px; border-radius: 12px; border: 2px solid transparent; background: rgba(255,255,255,0.15); color: #fff; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; white-space: nowrap; text-align: center; backdrop-filter: blur(5px); }
   .tab-btn:hover { background: rgba(255,255,255,0.25); }
   .tab-btn.active { background: var(--card); color: var(--brand); border-color: var(--gold); box-shadow: 0 4px 15px rgba(255,215,0,0.4); }
   
@@ -191,7 +191,7 @@
   @media (max-width:800px){
     .grid-layout { grid-template-columns: 1fr; }
     .vip-row{grid-template-columns:1fr 1fr;}
-    .tab-btn { flex: none; padding: 10px 14px; font-size: 13px; }
+    .tab-btn { padding: 10px 2px; font-size: 12px; } /* Nhỏ lại để vừa 4 tab */
   }
 </style>
 </head>
@@ -229,7 +229,6 @@
     </div>
   </header>
 
-  <!-- BANNER LƯU FILE TỰ ĐỘNG (ĐÃ KHÔI PHỤC) -->
   <div id="backupBanner"></div>
 
   <!-- TABS NAVIGATION -->
@@ -281,7 +280,19 @@
 
       <section class="card">
         <div class="card-head"><h2>🔮 Dự đoán đến Tết</h2></div>
-        <div id="projContent"></div>
+        <div id="projContent">
+          <!-- Đưa dpwInput ra ngoài để không bị lỗi DOM -->
+          <div class="proj-row"><span class="lbl">📊 Trung bình/ngày</span><span class="val" id="projAvg">0 đ</span></div>
+          <div class="proj-big">
+            <div class="plabel">🔮 Dự kiến đến Tết</div>
+            <div class="pvalue" id="projTotal">0 đ</div>
+            <div class="psub" id="projSub">Chưa có dữ liệu</div>
+          </div>
+          <div class="dpw-row">
+            <span>⚙️ Bạn làm mấy ngày / tuần?</span>
+            <input id="dpwInput" type="number" min="1" max="7" value="5">
+          </div>
+        </div>
       </section>
     </div>
   </div>
@@ -333,7 +344,7 @@
       </section>
     </div>
 
-    <!-- LỊCH THU NHẬP (ĐÃ KHÔI PHỤC) -->
+    <!-- LỊCH THU NHẬP -->
     <section class="card" style="margin-top: 16px;">
       <div class="card-head"><h2>📅 Lịch thu nhập</h2></div>
       <div class="cal-nav">
@@ -345,7 +356,7 @@
     </section>
   </div>
 
-  <!-- TAB 3: CHI TIÊU (NÂNG CẤP) -->
+  <!-- TAB 3: CHI TIÊU -->
   <div class="tab-content" id="tab-expense">
     <div class="grid-layout">
       <section class="card">
@@ -412,7 +423,7 @@
       </section>
 
       <section class="card">
-        <div class="card-head"><h2>⚙️ Cài đặt & Dữ liệu</h2></div>
+        <div class="card-head"><h2>⚙️ Dữ liệu & Hệ thống</h2></div>
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
           <button class="btn" id="btnDownload" style="background:#0ea472;color:#fff;">📥 Tải File Backup (.json)</button>
           <button class="btn" id="btnImport" style="background:#ff8f00;color:#fff;">📂 Nhập File Backup</button>
@@ -500,7 +511,7 @@ function showToast(msg, type='success'){
 }
 
 /* ==================== STATE & STORAGE ==================== */
-const LS_KEY = 'sochitieu_tet_tabs_v2';
+const LS_KEY = 'sochitieu_tet_tabs_v3';
 const defaultState = {
   dailyIncomes: [], expenses: [], paydays: [], 
   daysPerWeek: 5, goalAmount: 0, 
@@ -515,7 +526,7 @@ const hasFileAPI = 'showSaveFilePicker' in window;
 
 // DB
 const DB_NAME = 'sochitieu_db_tabs';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE = 'kv';
 function withTimeout(promise, ms) { return Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))]); }
 async function openDB(){ return new Promise((res, rej) => { const req = indexedDB.open(DB_NAME, DB_VERSION); req.onupgradeneeded = e => { const d = e.target.result; if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE); }; req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
@@ -547,7 +558,7 @@ async function writeToFile(force=false){
   try {
     if(!force){ const perm = await fileHandle.queryPermission({ mode:'readwrite' }); if(perm !== 'granted') return false; }
     const writable = await fileHandle.createWritable();
-    await writable.write(JSON.stringify({ _meta: { app: 'so-thu-nhap', version: 2 }, state }, null, 2));
+    await writable.write(JSON.stringify({ _meta: { app: 'so-thu-nhap', version: 3 }, state }, null, 2));
     await writable.close(); state.lastFileBackup = Date.now(); return true;
   } catch(e){ return false; }
 }
@@ -555,7 +566,7 @@ async function checkPermission(){ if(!fileHandle) return 'none'; try { const opt
 async function requestPermission(){ if(!fileHandle) return false; try { return (await fileHandle.requestPermission({ mode: 'readwrite' })) === 'granted'; } catch(e){ return false; } }
 
 async function downloadBackup(){
-  const data = { _meta: { app: 'so-thu-nhap', version: 2 }, state };
+  const data = { _meta: { app: 'so-thu-nhap', version: 3 }, state };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = `so-thu-nhap-${todayISO()}.json`; a.click();
@@ -648,9 +659,10 @@ $('#dayDate').value = today; $('#expDate').value = today; $('#paydayDate').value
 attachMoney($('#dayAmount')); attachMoney($('#expAmount')); attachMoney($('#goalAmount'));
 
 function syncInputs(){
-  $('#dayDate').value = today; $('#expDate').value = today;
-  $('#goalAmount').value = state.goalAmount ? nf.format(state.goalAmount) : '';
-  $('#dpwInput').value = state.daysPerWeek || 5;
+  if($('#dayDate')) $('#dayDate').value = today; 
+  if($('#expDate')) $('#expDate').value = today;
+  if($('#goalAmount')) $('#goalAmount').value = state.goalAmount ? nf.format(state.goalAmount) : '';
+  if($('#dpwInput')) $('#dpwInput').value = state.daysPerWeek || 5; // Check null an toàn
 }
 function updateQuickPreview(){
   const d = $('#dayDate').value, badge = $('#formDateBadge');
@@ -691,7 +703,6 @@ $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
 
 $('#goalAmount').addEventListener('input', e => { state.goalAmount = parseMoney(e.target.value); queueSave(); renderGoal(); });
-// KHÔI PHỤC SỰ KIỆN NGÀY LÀM VIỆC
 $('#dpwInput').addEventListener('input', e => { state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value,10)||5)); queueSave(); renderVip(); renderProjection(); });
 
 // Thêm thu nhập
@@ -782,23 +793,24 @@ function renderAll() {
 function renderTet() {
   const t = nextTet(); const now = new Date(); now.setHours(0,0,0,0);
   const days = Math.max(0, daysBetween(now, t.date));
-  $('#tetName').textContent = t.name; $('#tetDays').textContent = days === 0 ? '🎉' : days;
+  if($('#tetName')) $('#tetName').textContent = t.name; 
+  if($('#tetDays')) $('#tetDays').textContent = days === 0 ? '🎉' : days;
 }
 
 function renderVip() {
   const s = computeStats();
-  if(s.empty) {
+  if(!s.empty) {
+    $('#vipToday').textContent = fmt(s.todayTotal); $('#vipTodaySub').textContent = s.todayTotal > 0 ? 'Đã nhập' : 'Chưa nhập';
+    const at = computeAllTime();
+    $('#vipTotal').textContent = fmt(at.allIncome); $('#vipTotalSub').textContent = `${at.totalEntries} mục`;
+    $('#vipStreak').textContent = s.streak + ' ngày'; $('#vipStreakSub').textContent = s.streak > 0 ? '🔥 Giữ vững' : 'Hôm nay chưa ghi';
+    $('#vipForecast').textContent = fmt(s.projected); $('#vipForecastSub').textContent = `Còn ${s.daysUntilTet} ngày`;
+  } else {
     $('#vipToday').textContent = '–'; $('#vipTodaySub').textContent = 'Chưa nhập';
     $('#vipTotal').textContent = '–'; $('#vipTotalSub').textContent = '0 mục';
     $('#vipStreak').textContent = '–'; $('#vipStreakSub').textContent = 'Bắt đầu ghi';
     $('#vipForecast').textContent = '–'; $('#vipForecastSub').textContent = 'Cần dữ liệu';
-    return;
   }
-  $('#vipToday').textContent = fmt(s.todayTotal); $('#vipTodaySub').textContent = s.todayTotal > 0 ? 'Đã nhập' : 'Chưa nhập';
-  const at = computeAllTime();
-  $('#vipTotal').textContent = fmt(at.allIncome); $('#vipTotalSub').textContent = `${at.totalEntries} mục`;
-  $('#vipStreak').textContent = s.streak + ' ngày'; $('#vipStreakSub').textContent = s.streak > 0 ? '🔥 Giữ vững' : 'Hôm nay chưa ghi';
-  $('#vipForecast').textContent = fmt(s.projected); $('#vipForecastSub').textContent = `Còn ${s.daysUntilTet} ngày`;
 }
 
 function renderGoal() {
@@ -829,24 +841,16 @@ function renderGoal() {
 }
 
 function renderProjection() {
-  const s = computeStats(); const box = $('#projContent');
-  if(s.empty) { box.innerHTML = `<div style="text-align:center;padding:15px;color:var(--muted);font-size:13px">Chưa có dữ liệu</div>`; return; }
-  box.innerHTML = `
-    <div class="proj-row"><span class="lbl">📊 Trung bình/ngày</span><span class="val">${fmt(s.avgPerDay)}</span></div>
-    <div class="proj-big">
-      <div class="plabel">🔮 Dự kiến đến Tết</div>
-      <div class="pvalue">${fmt(s.projected)}</div>
-      <div class="psub">Dựa trên ${fmt(s.avgPerDay)}/ngày × ${s.workLeft} ngày làm việc</div>
-    </div>
-    <div class="dpw-row">
-      <span>⚙️ Bạn làm mấy ngày / tuần?</span>
-      <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
-    </div>
-  `;
-  $('#dpwInput').addEventListener('input', e => {
-    state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
-    queueSave(); renderVip(); renderProjection();
-  });
+  const s = computeStats(); 
+  if(s.empty) { 
+    $('#projAvg').textContent = '0 đ'; 
+    $('#projTotal').textContent = '0 đ'; 
+    $('#projSub').textContent = 'Chưa có dữ liệu'; 
+    return; 
+  }
+  $('#projAvg').textContent = fmt(s.avgPerDay);
+  $('#projTotal').textContent = fmt(s.projected);
+  $('#projSub').textContent = `Dựa trên ${fmt(s.avgPerDay)}/ngày × ${s.workLeft} ngày làm việc`;
 }
 
 function renderCalendar(){
