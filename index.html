@@ -58,6 +58,19 @@
   .tet-days{display:flex;align-items:baseline;gap:4px;justify-content:flex-end;font-size:26px;font-weight:900;line-height:1.1}
   .tet-days em{font-style:normal;font-size:12px;font-weight:700}
 
+  /* BANNER BACKUP TỰ ĐỘNG */
+  .backup-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#fff8e6,#ffefd0);border:1.5px solid #fcd34d;box-shadow:0 8px 20px -12px #f59e0b;flex-wrap:wrap;}
+  .backup-banner.safe{background:linear-gradient(135deg,#e6f7f0,#d1fae5);border-color:#34d399}
+  .backup-banner.prompt{background:linear-gradient(135deg,#eef0ff,#e0e7ff);border-color:#818cf8}
+  .banner-content{flex:1;min-width:200px}
+  .banner-title{font-size:13.5px;font-weight:800;margin-bottom:2px;color:#800000}
+  .banner-desc{font-size:12px;color:#8c1c1c;line-height:1.4}
+  .banner-desc b{color:#5d0000;font-weight:700}
+  .banner-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .banner-btn{border:0;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
+  .banner-btn.primary{background:#0ea472;color:#fff;}
+  .banner-btn.secondary{background:rgba(0,0,0,.08);color:#5d0000}
+
   /* TABS */
   .tabs-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; margin-bottom: 8px; }
   .tabs-container::-webkit-scrollbar { display: none; }
@@ -130,6 +143,9 @@
   .proj-big .plabel{font-size:12px;font-weight:800;color:#ffd700;margin-bottom:4px}
   .proj-big .pvalue{font-size:26px;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
   .proj-big .psub{font-size:11px;opacity:.9;margin-top:4px}
+  .dpw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card-2);border:1px solid #ffcdd2;border-radius:12px;padding:8px 12px;margin-top:12px;font-size:12.5px}
+  .dpw-row span{color:var(--muted);font-weight:700}
+  .dpw-row input{width:60px;padding:5px 8px;text-align:center;font-weight:900;font-size:16px;color:var(--brand);border:1px solid #ffcdd2;border-radius:8px}
 
   .item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;border:1px solid #ffcdd2;background:#fff;transition:.15s;margin-bottom:6px}
   .item:hover{background:#fff9f9;border-color:var(--brand)}
@@ -141,16 +157,18 @@
   .del{border:0;background:transparent;color:#ccc;font-size:18px;cursor:pointer;padding:2px 7px;border-radius:8px;}
   .del:hover{color:var(--red);background:var(--red-soft)}
 
-  /* BACKUP BANNER */
-  .backup-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#fff8e6,#ffefd0);border:1.5px solid #fcd34d;box-shadow:0 8px 20px -12px #f59e0b;flex-wrap:wrap; margin-bottom:10px;}
-  .backup-banner.safe{background:linear-gradient(135deg,#e6f7f0,#d1fae5);border-color:#34d399}
-  .banner-content{flex:1;min-width:200px}
-  .banner-title{font-size:13.5px;font-weight:800;margin-bottom:2px;color:#800000}
-  .banner-desc{font-size:12px;color:#8c1c1c;line-height:1.4}
-  .banner-actions{display:flex;gap:8px;flex-wrap:wrap}
-  .banner-btn{border:0;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;transition:.15s}
-  .banner-btn.primary{background:#0ea472;color:#fff;}
-  .banner-btn.secondary{background:rgba(0,0,0,.08);color:#5d0000}
+  /* LỊCH THU NHẬP */
+  .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+  .cal-nav .month-lbl{font-weight:900;font-size:15px;color:var(--brand)}
+  .cal-nav button{width:32px;height:32px;border-radius:9px;border:1px solid var(--brand-soft);background:var(--card-2);cursor:pointer;font-size:15px;font-weight:bold;color:var(--brand);display:grid;place-items:center}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-dow{text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding:4px 0}
+  .cal-cell{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px;background:#fff3f3;position:relative;cursor:pointer;border:1px solid transparent;min-height:38px}
+  .cal-cell.empty{background:transparent;pointer-events:none;border:0}
+  .cal-cell.today{outline:2px solid var(--brand);outline-offset:-2px}
+  .cal-cell.payday{background:linear-gradient(135deg,#ffd700,#ff8f00);color:#800000;font-weight:900;box-shadow:0 0 10px #ffd700}
+  .cal-day{font-weight:800;font-size:12px;line-height:1}
+  .cal-amt{font-size:8.5px;font-weight:900;margin-top:3px;line-height:1;white-space:nowrap}
 
   /* TOAST */
   .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; }
@@ -211,6 +229,9 @@
     </div>
   </header>
 
+  <!-- BANNER LƯU FILE TỰ ĐỘNG (ĐÃ KHÔI PHỤC) -->
+  <div id="backupBanner"></div>
+
   <!-- TABS NAVIGATION -->
   <div class="tabs-container">
     <button class="tab-btn active" data-tab="dashboard">📊 Tổng quan</button>
@@ -218,8 +239,6 @@
     <button class="tab-btn" data-tab="expense">🧾 Chi tiêu</button>
     <button class="tab-btn" data-tab="settings">⚙️ Cài đặt</button>
   </div>
-
-  <div id="backupBanner"></div>
 
   <!-- TAB 1: TỔNG QUAN -->
   <div class="tab-content active" id="tab-dashboard">
@@ -310,9 +329,20 @@
         </div>
         <div class="hist-filter" id="histFilter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
         <div class="hist-summary" id="histSummary" style="font-size:12.5px;color:var(--muted);background:#fff3f3;padding:8px 12px;border-radius:10px;margin-bottom:12px;font-weight:bold;"></div>
-        <div id="histList" style="max-height:400px;overflow:auto;"></div>
+        <div id="histList" style="max-height:300px;overflow:auto;"></div>
       </section>
     </div>
+
+    <!-- LỊCH THU NHẬP (ĐÃ KHÔI PHỤC) -->
+    <section class="card" style="margin-top: 16px;">
+      <div class="card-head"><h2>📅 Lịch thu nhập</h2></div>
+      <div class="cal-nav">
+        <button id="calPrev">‹</button>
+        <span class="month-lbl" id="calMonthLbl">–</span>
+        <button id="calNext">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </section>
   </div>
 
   <!-- TAB 3: CHI TIÊU (NÂNG CẤP) -->
@@ -382,15 +412,8 @@
       </section>
 
       <section class="card">
-        <div class="card-head"><h2>⚙️ Dữ liệu & Hệ thống</h2></div>
-        <div class="field">
-          <span>Thiết lập ngày làm việc</span>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input id="dpwInput" type="number" min="1" max="7" value="5" style="width:80px; text-align:center;">
-            <span style="font-size:13px; font-weight:700;">ngày / tuần</span>
-          </div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+        <div class="card-head"><h2>⚙️ Cài đặt & Dữ liệu</h2></div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
           <button class="btn" id="btnDownload" style="background:#0ea472;color:#fff;">📥 Tải File Backup (.json)</button>
           <button class="btn" id="btnImport" style="background:#ff8f00;color:#fff;">📂 Nhập File Backup</button>
           <button class="btn" id="btnReset" style="background:#fff;color:var(--red);border:1px solid var(--red);">🗑 Xoá toàn bộ dữ liệu</button>
@@ -477,7 +500,7 @@ function showToast(msg, type='success'){
 }
 
 /* ==================== STATE & STORAGE ==================== */
-const LS_KEY = 'sochitieu_tet_tabs_v1';
+const LS_KEY = 'sochitieu_tet_tabs_v2';
 const defaultState = {
   dailyIncomes: [], expenses: [], paydays: [], 
   daysPerWeek: 5, goalAmount: 0, 
@@ -486,12 +509,13 @@ const defaultState = {
 };
 let state = JSON.parse(JSON.stringify(defaultState));
 let db = null;
+let fileHandle = null;
 let historyYearFilter = 'all';
 const hasFileAPI = 'showSaveFilePicker' in window;
 
 // DB
 const DB_NAME = 'sochitieu_db_tabs';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE = 'kv';
 function withTimeout(promise, ms) { return Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))]); }
 async function openDB(){ return new Promise((res, rej) => { const req = indexedDB.open(DB_NAME, DB_VERSION); req.onupgradeneeded = e => { const d = e.target.result; if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE); }; req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
@@ -502,17 +526,41 @@ async function persistState(){
   const snap = JSON.parse(JSON.stringify(state));
   try { localStorage.setItem(LS_KEY, JSON.stringify(snap)); } catch(e){}
   await idbSet('state', snap);
+  if(fileHandle) await writeToFile();
 }
 async function queueSave(){ await persistState(); }
 
-// File Backup
+/* ==================== FILE SYSTEM & BACKUP ==================== */
+async function pickSaveFile(){
+  if(!hasFileAPI){ showToast('Trình duyệt không hỗ trợ. Hãy dùng Tải Backup!', 'error'); return false; }
+  try {
+    const handle = await window.showSaveFilePicker({ suggestedName: `so-thu-nhap-${todayISO()}.json`, types: [{ description: 'File dữ liệu', accept: { 'application/json': ['.json'] } }] });
+    fileHandle = handle;
+    await idbSet('fileHandle', handle);
+    const ok = await writeToFile(true);
+    if(ok){ showToast('✅ Đã bật lưu vĩnh viễn!'); state.lastFileBackup = Date.now(); await persistState(); updateBackupUI('active'); }
+    return ok;
+  } catch(e){ if(e.name !== 'AbortError') console.error(e); return false; }
+}
+async function writeToFile(force=false){
+  if(!fileHandle) return false;
+  try {
+    if(!force){ const perm = await fileHandle.queryPermission({ mode:'readwrite' }); if(perm !== 'granted') return false; }
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify({ _meta: { app: 'so-thu-nhap', version: 2 }, state }, null, 2));
+    await writable.close(); state.lastFileBackup = Date.now(); return true;
+  } catch(e){ return false; }
+}
+async function checkPermission(){ if(!fileHandle) return 'none'; try { const opts = { mode: 'readwrite' }; if(await fileHandle.queryPermission(opts) === 'granted') return 'granted'; if(await fileHandle.queryPermission(opts) === 'denied') return 'denied'; return 'prompt'; } catch(e){ return 'none'; } }
+async function requestPermission(){ if(!fileHandle) return false; try { return (await fileHandle.requestPermission({ mode: 'readwrite' })) === 'granted'; } catch(e){ return false; } }
+
 async function downloadBackup(){
-  const data = { _meta: { app: 'so-thu-nhap', version: 1 }, state };
+  const data = { _meta: { app: 'so-thu-nhap', version: 2 }, state };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = `so-thu-nhap-${todayISO()}.json`; a.click();
   URL.revokeObjectURL(url);
-  state.lastFileBackup = Date.now(); await queueSave();
+  state.lastFileBackup = Date.now(); await persistState();
   showToast('📥 Đã tải file backup!');
 }
 function processImportedText(text) {
@@ -530,6 +578,68 @@ function processImportedText(text) {
     }
     queueSave(); syncInputs(); renderAll(); showToast('✅ Đã nhập dữ liệu từ file!');
   } catch(e) { showToast('File không hợp lệ!', 'error'); }
+}
+
+async function updateBackupUI(mode){
+  const banner = $('#backupBanner'); if(!banner) return;
+  if(!hasFileAPI){
+    banner.innerHTML = `
+      <div class="backup-banner">
+        <div class="banner-content">
+          <div class="banner-title">Lưu ý cho iPhone / Safari</div>
+          <div class="banner-desc">Safari sẽ <b>tự động xoá dữ liệu</b> sau vài ngày. Hãy bấm <b>Tải File Backup</b> ở tab Cài đặt sau khi nhập để lưu an toàn!</div>
+        </div>
+      </div>`;
+    return;
+  }
+  if(mode === 'active'){
+    banner.innerHTML = `
+      <div class="backup-banner safe">
+        <div class="banner-content">
+          <div class="banner-title">Đang lưu vĩnh viễn vào file máy tính</div>
+          <div class="banner-desc">Dữ liệu tự động đồng bộ ra file. Không bao giờ mất.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn secondary" id="bSaveNow">💾 Lưu ngay</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải bản sao</button>
+        </div>
+      </div>`;
+    $('#bSaveNow').onclick = async () => { await persistState(); showToast('💾 Đã lưu!'); };
+    $('#bDownload').onclick = downloadBackup;
+    return;
+  }
+  if(mode === 'prompt'){
+    banner.innerHTML = `
+      <div class="backup-banner prompt">
+        <div class="banner-content">
+          <div class="banner-title">Cần cấp lại quyền lưu file</div>
+          <div class="banner-desc">Trình duyệt cần bạn cấp lại quyền ghi.</div>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" id="bGrant">🔓 Bật lại</button>
+          <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
+        </div>
+      </div>`;
+    $('#bGrant').onclick = async () => {
+      const ok = await requestPermission();
+      if(ok){ showToast('✅ Đã bật lại!'); await persistState(); updateBackupUI('active'); }
+    };
+    $('#bDownload').onclick = downloadBackup;
+    return;
+  }
+  banner.innerHTML = `
+    <div class="backup-banner">
+      <div class="banner-content">
+        <div class="banner-title">Bật lưu vĩnh viễn — an toàn nhất</div>
+        <div class="banner-desc">Dữ liệu tự động ghi vào 1 file trên máy tính.</div>
+      </div>
+      <div class="banner-actions">
+        <button class="banner-btn primary" id="bEnable">🔒 Bật lưu</button>
+        <button class="banner-btn secondary" id="bDownload">📥 Tải backup</button>
+      </div>
+    </div>`;
+  $('#bEnable').onclick = pickSaveFile;
+  $('#bDownload').onclick = downloadBackup;
 }
 
 /* ==================== INIT UI & EVENTS ==================== */
@@ -568,25 +678,20 @@ function renderExpCats(){
     </div>
   `).join('');
   el.querySelectorAll('.exp-cat-item').forEach(item => {
-    item.addEventListener('click', () => {
-      state.selectedExpCat = item.dataset.cat;
-      renderExpCats(); // Re-render to update selected class
-    });
+    item.addEventListener('click', () => { state.selectedExpCat = item.dataset.cat; renderExpCats(); });
   });
 }
 
 // Sự kiện nhập tiền
 document.querySelectorAll('[data-quick]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const cur = parseMoney($('#dayAmount').value);
-    $('#dayAmount').value = nf.format(cur + parseInt(btn.dataset.quick, 10));
-  });
+  btn.addEventListener('click', () => { const cur = parseMoney($('#dayAmount').value); $('#dayAmount').value = nf.format(cur + parseInt(btn.dataset.quick, 10)); });
 });
 document.querySelector('[data-clear]').addEventListener('click', () => $('#dayAmount').value = '');
 $('#dayAmount').addEventListener('input', updateQuickPreview);
 $('#dayDate').addEventListener('change', updateQuickPreview);
 
 $('#goalAmount').addEventListener('input', e => { state.goalAmount = parseMoney(e.target.value); queueSave(); renderGoal(); });
+// KHÔI PHỤC SỰ KIỆN NGÀY LÀM VIỆC
 $('#dpwInput').addEventListener('input', e => { state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value,10)||5)); queueSave(); renderVip(); renderProjection(); });
 
 // Thêm thu nhập
@@ -621,21 +726,14 @@ $('#paydayForm').addEventListener('submit', e => {
 });
 
 // Xoá
-$('#expList').addEventListener('click', e => {
-  const btn = e.target.closest('[data-delexp]'); if(!btn) return;
-  state.expenses = state.expenses.filter(x => x.id !== btn.dataset.delexp);
-  queueSave(); renderExpenses();
-});
-$('#histList').addEventListener('click', e => {
-  const btn = e.target.closest('[data-delinc]'); if(!btn) return;
-  state.dailyIncomes = state.dailyIncomes.filter(x => x.id !== btn.dataset.delinc);
-  queueSave(); renderAll();
-});
-$('#paydayList').addEventListener('click', e => {
-  const btn = e.target.closest('[data-delpay]'); if(!btn) return;
-  state.paydays = state.paydays.filter(x => x.id !== btn.dataset.delpay);
-  queueSave(); renderPaydays();
-});
+$('#expList').addEventListener('click', e => { const btn = e.target.closest('[data-delexp]'); if(!btn) return; state.expenses = state.expenses.filter(x => x.id !== btn.dataset.delexp); queueSave(); renderExpenses(); });
+$('#histList').addEventListener('click', e => { const btn = e.target.closest('[data-delinc]'); if(!btn) return; state.dailyIncomes = state.dailyIncomes.filter(x => x.id !== btn.dataset.delinc); queueSave(); renderAll(); });
+$('#paydayList').addEventListener('click', e => { const btn = e.target.closest('[data-delpay]'); if(!btn) return; state.paydays = state.paydays.filter(x => x.id !== btn.dataset.delpay); queueSave(); renderPaydays(); });
+
+// Lịch (Calendar)
+let calMonth = currentMonth();
+$('#calPrev').addEventListener('click', () => { calMonth = shiftMonth(calMonth, -1); renderCalendar(); });
+$('#calNext').addEventListener('click', () => { calMonth = shiftMonth(calMonth, 1);  renderCalendar(); });
 
 // Settings Buttons
 $('#btnDownload').addEventListener('click', downloadBackup);
@@ -674,11 +772,11 @@ function computeStats() {
   const daysUntilTet = Math.max(0, daysBetween(now, tet.date));
   const workDaysLeft = Math.round((daysUntilTet / 7) * state.daysPerWeek);
   const projected = total + avgPerDay * workDaysLeft;
-  return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak, projected, daysUntilTet };
+  return { empty:false, total, daysTracked, avgPerDay, todayTotal, streak, projected, daysUntilTet, workLeft: workDaysLeft };
 }
 
 function renderAll() {
-  renderTet(); renderVip(); renderGoal(); renderProjection(); renderHistory(); renderExpenses(); renderPaydays(); renderExpCats();
+  renderTet(); renderVip(); renderGoal(); renderProjection(); renderCalendar(); renderHistory(); renderExpenses(); renderPaydays(); renderExpCats();
 }
 
 function renderTet() {
@@ -738,9 +836,53 @@ function renderProjection() {
     <div class="proj-big">
       <div class="plabel">🔮 Dự kiến đến Tết</div>
       <div class="pvalue">${fmt(s.projected)}</div>
-      <div class="psub">Dựa trên ${fmt(s.avgPerDay)}/ngày × ${Math.round((s.daysUntilTet/7)*state.daysPerWeek)} ngày làm việc</div>
+      <div class="psub">Dựa trên ${fmt(s.avgPerDay)}/ngày × ${s.workLeft} ngày làm việc</div>
+    </div>
+    <div class="dpw-row">
+      <span>⚙️ Bạn làm mấy ngày / tuần?</span>
+      <input id="dpwInput" type="number" min="1" max="7" value="${state.daysPerWeek}">
     </div>
   `;
+  $('#dpwInput').addEventListener('input', e => {
+    state.daysPerWeek = Math.max(1, Math.min(7, parseInt(e.target.value, 10) || 5));
+    queueSave(); renderVip(); renderProjection();
+  });
+}
+
+function renderCalendar(){
+  const [y,m] = calMonth.split('-').map(Number);
+  const firstDay = new Date(y, m-1, 1).getDay();
+  const startOffset = (firstDay + 6) % 7;
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const dayTotals = {};
+  state.dailyIncomes.forEach(e => { if(e.date.startsWith(calMonth)) dayTotals[e.date] = (dayTotals[e.date] || 0) + e.amount; });
+  const maxAmt = Math.max(1, ...Object.values(dayTotals));
+  const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  $('#calMonthLbl').textContent = `${monthNames[m-1]} ${y}`;
+
+  const dow = ['T2','T3','T4','T5','T6','T7','CN'];
+  let html = dow.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0; i<startOffset; i++) html += '<div class="cal-cell empty"></div>';
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const amt = dayTotals[dateStr] || 0;
+    const isToday = dateStr === todayISO();
+    let isPayday = false;
+    state.paydays.forEach(p => {
+      if(p.repeat === 'monthly' && p.dayOfMonth === d) isPayday = true;
+      else if(p.repeat === 'none' && p.date === dateStr) isPayday = true;
+    });
+    const intensity = amt ? amt / maxAmt : 0;
+    let bg = 'transparent', cls = isPayday ? 'payday' : '';
+    if(amt && !isPayday){ bg = `rgba(211, 47, 47, ${0.2 + intensity * 0.6})`; cls = 'income-mid'; }
+    html += `<div class="cal-cell ${isToday?'today':''} ${cls}" data-date="${dateStr}" style="background:${bg}">
+      <span class="cal-day">${d}</span>
+      ${amt ? `<span class="cal-amt">${formatShort(amt)}</span>` : ''}
+      ${isPayday ? `<span style="font-size:10px">💰</span>` : ''}
+    </div>`;
+  }
+  $('#calGrid').innerHTML = html;
 }
 
 function renderHistory() {
@@ -780,14 +922,10 @@ function renderExpenses() {
   const total = items.reduce((s,e) => s + e.amount, 0);
   $('#expTotal').textContent = fmt(total);
 
-  // Chart
-  const catTotals = {};
-  items.forEach(e => { catTotals[e.cat] = (catTotals[e.cat] || 0) + e.amount; });
+  const catTotals = {}; items.forEach(e => { catTotals[e.cat] = (catTotals[e.cat] || 0) + e.amount; });
   const chartEl = $('#expChart');
   const sortedCats = Object.entries(catTotals).sort((a,b) => b[1] - a[1]);
-  if(!sortedCats.length) {
-    chartEl.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Chưa có chi tiêu tháng này</div>`;
-  } else {
+  if(!sortedCats.length) { chartEl.innerHTML = `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">Chưa có chi tiêu tháng này</div>`; } else {
     chartEl.innerHTML = sortedCats.map(([cat, amt]) => {
       const c = EXPENSE_CATS[cat] || EXPENSE_CATS.other;
       const pct = total > 0 ? (amt / total * 100) : 0;
@@ -799,7 +937,6 @@ function renderExpenses() {
     }).join('');
   }
 
-  // List
   const listEl = $('#expList');
   if(!items.length) { listEl.innerHTML = ''; return; }
   listEl.innerHTML = items.map(e => {
@@ -898,6 +1035,16 @@ setInterval(() => {
   if(db) {
     const idbData = await idbGet('state');
     if(idbData && idbData.dailyIncomes?.length >= state.dailyIncomes?.length) { state = { ...defaultState, ...idbData }; }
+    const fh = await idbGet('fileHandle');
+    if(fh){
+      fileHandle = fh;
+      const perm = await checkPermission();
+      if(perm === 'granted') updateBackupUI('active');
+      else if(perm === 'prompt') updateBackupUI('prompt');
+      else { fileHandle = null; updateBackupUI('none'); }
+    } else updateBackupUI('none');
+  } else {
+    updateBackupUI('none');
   }
   syncInputs(); renderAll(); setTimeout(checkPayDay, 1000);
 })();
